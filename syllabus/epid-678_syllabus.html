@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>EPIB 622 Advanced health decision modelling</title>
+<title>EPIB 678-001 Advanced health decision modelling</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -74,7 +74,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">EPIB 622 Advanced health decision modelling</h1>
+<h1 class="title">EPIB 678-001 Advanced health decision modelling</h1>
 <p class="subtitle lead">DRAFT Course syllabus, Winter 2026, McGill University</p>
 </div>
 
@@ -269,7 +269,7 @@ Guest lectures shown here are from Fall 2025
 <thead>
 <tr class="header">
 <th><strong>Date</strong></th>
-<th><strong>Topics, Readings/tasks to be completed before class</strong> |</th>
+<th><strong>Topics, Readings/tasks to be completed before class</strong>s</th>
 </tr>
 </thead>
 <tbody>
@@ -314,7 +314,7 @@ Guest lectures shown here are from Fall 2025
 </tr>
 <tr class="even">
 <td><strong>15 Jan Th</strong></td>
-<td><p><strong>4. Cohort models I</strong></p>
+<td><p><strong>4. Discete time cohort models I</strong></p>
 <ul>
 <li>Discrete time state-transition models</li>
 <li>Markov model solution</li>
@@ -326,7 +326,7 @@ Guest lectures shown here are from Fall 2025
 </tr>
 <tr class="odd">
 <td><strong>20 Jan Tu</strong></td>
-<td><p><strong>5. Cohort models II</strong></p>
+<td><p><strong>5. Discrete time cohort models II</strong></p>
 <ul>
 <li>Capturing health-economic outcomes</li>
 <li>Discrete time error corrections</li>
@@ -354,7 +354,6 @@ Guest lectures shown here are from Fall 2025
 <ul>
 <li>Monte Carlo simulation</li>
 <li>Simulating decision trees</li>
-<li>Simulating state transition models</li>
 <li><strong>Assignment 3 available (simulation)</strong></li>
 </ul>
 <p><a href="http://www.doi.org/10.1177/0272989X18754513">Krijkamp et. al.&nbsp;2018. Microsimulation modelling for health decision sciences Using R: A tutorial</a></p></td>
@@ -363,8 +362,9 @@ Guest lectures shown here are from Fall 2025
 <td><strong>29 Jan Th</strong></td>
 <td><p><strong>8. Simulation II</strong></p>
 <ul>
+<li><p>Simulating state transition models</p></li>
 <li><p>Discrete event simulation</p></li>
-<li><p>Simulating resource constraint</p></li>
+<li><p>Simulating resource constraints</p></li>
 <li><p><strong>Assignment 2 due Wednesday</strong></p></li>
 </ul>
 <p><a href="https://doi.org/10.1101/2025.05.15.25327635">Lopez-Mendez et. al.&nbsp;2025. A Tutorial on Discrete Event Simulation Models in R Using a Cost-Effectiveness Analysis Example</a></p></td>
@@ -402,13 +402,23 @@ Guest lectures shown here are from Fall 2025
 <li>Univariate sensitivity analysis</li>
 <li>Scenario analysis</li>
 <li><strong>Assignment 3 due Friday</strong></li>
-<li><strong>Assignment 4 available (Sensitivity analysis)</strong></li>
+<li><strong>Assignment 4 available (DEQ? Sensitivity analysis)</strong></li>
 </ul>
 <p><a href="https://doi.org/10.1177/0272989X12458348">Briggs et. al.&nbsp;2012. Model parameter estimation and uncertainty analysis: ISPOR-SMDM modelling good practices task force report</a></p></td>
 </tr>
 <tr class="even">
 <td><strong>12 Feb Th</strong></td>
-<td><p><strong>12. Statistical models, causal inference, and decision-analytic modelling</strong></p>
+<td><p><strong>12. Differential equations models</strong></p>
+<ul>
+<li>Intro to differential equations</li>
+<li>Compartmental epidemic models</li>
+<li>System dynamic models</li>
+<li>Difference equation approximation</li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td><strong>17 Feb Tu</strong></td>
+<td><p><strong>13. Statistical models, causal inference, and decision-analytic modelling</strong></p>
 <ul>
 <li>Time-to-event models</li>
 <li>Competing events</li>
@@ -417,9 +427,9 @@ Guest lectures shown here are from Fall 2025
 <p><strong>Primary:</strong> <a href="https://doi.org/10.3205/000314">Kühne et. al.&nbsp;(2022). Causal evidence in health decision making: methodological approaches of causal inference and health decision science</a></p>
 <p><strong>Supplemental:</strong> <a href="https://doi.org/10.1177/0272989x16651869">Williams et. al.&nbsp;(2016). Cost-effectiveness analysis in R using a multi-state modelling survival analysis framework: A tutorial</a></p></td>
 </tr>
-<tr class="odd">
-<td><strong>17 Feb Tu</strong></td>
-<td><p><strong>13. Calibration &amp; validation</strong></p>
+<tr class="even">
+<td><strong>19 Feb Th</strong></td>
+<td><p><strong>14. Calibration &amp; validation</strong></p>
 <ul>
 <li>Bayesian model calibration</li>
 <li>Model validation</li>
@@ -428,25 +438,9 @@ Guest lectures shown here are from Fall 2025
 <p><strong>Primary:</strong> <a href="https://www.doi.org/10.1007/s40273-017-0494-4">Menzies et. al.&nbsp;2017. Bayesian methods for calibrating health policy models: A tutorial.</a></p>
 <p><strong>Supplemental:</strong> <a href="https://www.doi.org/10.1177/0272989X12454579">Eddy et. al.&nbsp;2012. Model transparency and validation: ISPOR-SMDM modelling good practices task force report</a></p></td>
 </tr>
-<tr class="even">
-<td><strong>19 Feb Th</strong></td>
-<td><p><strong>14. Guest lecture (ZOOM ONLY):</strong> Adapting a model of cervical carcinogenesis to self-identified Black women to evaluate racial disparities in the United States (Jenny Spencer PhD, University of Texas at Austin)</p>
-<ul>
-<li>Office hours on Zoom only</li>
-</ul>
-<p><a href="https://doi.org/10.1093/jncimonographs/lgad015">Primary manuscript,</a> <a href="https://doi.org/10.1016/j.amepre.2023.04.016">Supplemental manuscript</a></p></td>
-</tr>
 <tr class="odd">
 <td><strong>24 Feb Tu</strong></td>
-<td><p><strong>15. Guest lecture:</strong> Two microsimulation-based decision analyses: Needle and syringe programs for people who inject drugs (Jihoon Lim, PhD, McGill) and medications to improve cardiorenal outcomes in patients with diabetes (Ethan McNally, McGill)</p>
-<ul>
-<li><strong>Assignment 4 due Friday</strong></li>
-</ul>
-<p><a href="https://doi.org/10.1186/s12954-024-01037-3">Needle syringe programs manuscript</a>, <a href="https://github.com/jihoon-jay/Microsimulation">Code</a></p></td>
-</tr>
-<tr class="even">
-<td><strong>26 Feb Th</strong></td>
-<td><p><strong>16. Value of information analysis (ZOOM ONLY)</strong></p>
+<td><p><strong>15. Value of information analysis</strong></p>
 <ul>
 <li>For research prioritization and as sensitivity analysis</li>
 <li>VOI measures (EVPI, EVPPI, EVSI)</li>
@@ -457,6 +451,10 @@ Guest lectures shown here are from Fall 2025
 <li>Office hours on Zoom only</li>
 </ul>
 <p><a href="https://doi.org/10.1016/j.jval.2020.01.001">Fenwick et. al.&nbsp;2020. Value of information analysis for research decisions—an introduction: Report 1 of the ISPOR Value of Information Analysis Emerging Good Practices Task Force</a></p></td>
+</tr>
+<tr class="even">
+<td><strong>26 Feb Th</strong></td>
+<td><strong>16. Guest lecture 1</strong></td>
 </tr>
 <tr class="odd">
 <td></td>
@@ -478,41 +476,34 @@ Guest lectures shown here are from Fall 2025
 </tr>
 <tr class="even">
 <td><strong>17 Mar Tu</strong></td>
-<td><p><strong>19. Guest lecture:</strong> Estimating Treatment-Switching Bias in a Randomized Clinical Trial of Ovarian Cancer Treatment: Combining Causal Inference with Decision-Analytic modelling (Uwe Siebert, MD and Felicitas Kuehne, MSc, UMIT Triol)</p>
-<p><a href="https://doi.org/10.1177/0272989x211026288">Manuscript</a></p></td>
+<td><strong>19. Guest lecture 2</strong></td>
 </tr>
 <tr class="odd">
 <td><strong>19 Mar Th</strong></td>
-<td><p><strong>20. Guest lecture: Choose your recorded guest lecture</strong></p>
-<p>Students choose a guest lecture recording from an earlier year to watch.</p></td>
+<td><strong>20. Guest lecture 3</strong></td>
 </tr>
 <tr class="even">
 <td><strong>24 Mar Tu</strong></td>
-<td><p><strong>21. Guest lecture:</strong> Dynamic compartmental modelling to inform influenza dynamics and vaccine policies in the United States by Kyu Lee, PhD (University of Washington School of Pharmacy)</p>
-<p><a href="https://doi.org/10.1093/ofid/ofab607">Manuscript</a>, <a href="https://github.com/noyarim/Influenza-VOI">Code</a>, <a href="https://doi.org/10.1093/infdis/jiad541">Supplemental manuscript</a></p>
+<td><p><strong>21. Guest lecture 4</strong></p>
 <ul>
 <li><strong>Assignment 5 due Friday</strong></li>
 </ul></td>
 </tr>
 <tr class="odd">
 <td><strong>26 Mar Th</strong></td>
-<td><p><strong>22 Guest lecture:</strong> modelling the Balance of Benefits and Harms of Cervical Cancer Screening with Cytology and Human Papillomavirus Testing by Talía Malagón, PhD (McGill University)</p>
-<p><a href="https://doi.org/10.1158/1055-9965.EPI-20-0190">Manuscript</a>, Code on myCourses</p></td>
+<td><strong>22 Guest lecture 5</strong></td>
 </tr>
 <tr class="even">
 <td><strong>31 Mar Tu</strong></td>
-<td><p><strong>23. Guest lecture:</strong> “Estimating the total incidence of type 1 diabetes in children and adolescents aged 0–19 years from 1990 to 2050: a global simulation-based analysis” by Zachary J. Ward, MPH PhD (Harvard T.H. Chan School of Public Health)</p>
-<p><a href="https://doi.org/10.1016/S2213-8587(22)00276-5">Manuscript</a></p></td>
+<td><strong>23. Guest lecture 6</strong></td>
 </tr>
 <tr class="odd">
 <td><strong>2 Apr Th</strong></td>
-<td><p><strong>24. Guest lecture: “</strong>Integrating decision modelling and machine learning to inform treatment stratification” by John Giardina, PhD (Mass General Research Institute / Harvard University)</p>
-<p><a href="https://doi.org/10.1002/hec.4834">Manuscript</a></p></td>
+<td><strong>24. Guest lecture 7</strong></td>
 </tr>
 <tr class="even">
 <td><strong>7 Apr Tu</strong></td>
-<td><p><strong>25. Guest lecture:</strong> “Costs, quality-adjusted life years, and value-of-information of different thresholds for the initiation of invasive ventilation in hypoxemic respiratory failure” by Christopher Yarnell, MD (University of Toronto / University Health Network)</p>
-<p><a href="https://doi.org/10.1101/2023.03.16.23286754">Manuscript</a>, <a href="https://github.com/cjyarnell/IMVthresholds_HealthEconomicEvaluation">Code</a></p></td>
+<td><strong>25. Guest lecture 8</strong></td>
 </tr>
 <tr class="odd">
 <td><strong>9 Apr Th</strong></td>
