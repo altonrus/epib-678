@@ -2,7 +2,7 @@
 title: "Uncertainty analysis"
 subtitle: "EPIB  676 session 11, McGill University"
 author: "Alton Russell"
-date: "3 Oct 2024"
+date: "10 Feb 2026"
 format: revealjs
 editor: visual
 ---
@@ -13,7 +13,7 @@ editor: visual
 #| echo: true
 library(ggplot2) #plotting
 library(tidyverse)
-library(dampack) #cost-effectiveness sensitivity analysis
+library(dampack) #sensitivity analysis functions for CEA
 # https://github.com/DARTH-git/dampack
 library(rriskDistributions) #fit distn to quantile
 theme_set(theme_bw()) #set ggplot theme
@@ -25,7 +25,7 @@ theme_set(theme_bw()) #set ggplot theme
 
 -   Probabilistic sensitivity analysis
 
-## Decision-analytic model as function
+## Recall: Decision-analytic model as function
 
 -   Function mapping inputs (data, parameters) into estimated outcomes for two or more alternatives
 -   Propagate uncertainty
@@ -45,7 +45,7 @@ theme_set(theme_bw()) #set ggplot theme
 
 -   **First order** **(stochastic):** variation between statistically identical patients
 
-    -   Eliminate (run enough simulations to make negligible)
+    -   [**Eliminate**]{.underline} (run enough simulations to make negligible)
 
 -   **Second order (parameter):** uncertainty in a population parameter
 
@@ -77,23 +77,22 @@ Changing model
 #| echo: true
 
 #base case parameters
-l_prms <- list(cost_treat = 60000,      prob_death_noTreat = .3,
-               rr_death_drug = 0.5,     QALY_survive = 12,
-               cost_survive = 12000)
+prms <- list(cost_treat = 60000,      prob_death_noTreat = .3,
+             rr_death_drug = 0.5,     QALY_survive = 12,
+             cost_survive = 12000)
 
-model <- function(l_prms){
-  tot_cost_noTreat = (1-l_prms$prob_death_noTreat)*l_prms$cost_survive
-  tot_cost_treat = (l_prms$cost_treat + 
-                    (1-l_prms$prob_death_noTreat*l_prms$rr_death_drug)*
-                    l_prms$cost_survive)
-  tot_QALY_noTreat = (1-l_prms$prob_death_noTreat)*l_prms$QALY_survive
-  tot_QALY_treat = (1-l_prms$prob_death_noTreat*l_prms$rr_death_drug)*
-                   l_prms$QALY_survive
-  return(list(tot_cost_noTreat=tot_cost_noTreat,  tot_cost_treat=tot_cost_treat,
-              tot_QALY_noTreat=tot_QALY_noTreat,  tot_QALY_treat=tot_QALY_treat,
-             ICER_treat = (tot_cost_treat - tot_cost_noTreat)/
-               (tot_QALY_treat - tot_QALY_noTreat)))
-}
+model <- function(prms){ # 5 parameters, 5 outcomes
+  tot_cost_noTreat = (1-prms$prob_death_noTreat)*prms$cost_survive
+  tot_cost_treat = (prms$cost_treat + 
+        (1-prms$prob_death_noTreat*prms$rr_death_drug)*prms$cost_survive)
+  tot_QALY_noTreat = (1-prms$prob_death_noTreat)*prms$QALY_survive
+  tot_QALY_treat = (1-prms$prob_death_noTreat*prms$rr_death_drug)*prms$QALY_survive
+  return(list(tot_cost_noTreat=tot_cost_noTreat,
+              tot_cost_treat=tot_cost_treat,
+              tot_QALY_noTreat=tot_QALY_noTreat,
+              tot_QALY_treat=tot_QALY_treat,
+              ICER_treat = (tot_cost_treat - tot_cost_noTreat)/
+                           (tot_QALY_treat - tot_QALY_noTreat)))}
 ```
 
 ## Base case results
@@ -102,7 +101,7 @@ All parameters at their expected value.
 
 ```{r}
 #| echo: true
-l_basecase_results <- model(l_prms); l_basecase_results
+l_basecase_results <- model(prms); l_basecase_results
 ```
 
 ## One way sensitivity analysis
@@ -110,6 +109,7 @@ l_basecase_results <- model(l_prms); l_basecase_results
 -   Define the **minimum** and **maximum** plausible value for an uncertain parameter
 
     -   Sometimes based on 95% confidence interval from a study or meta-analysis
+    -   If study populations may systematically differ from modelled population, wider range may be warranted.
 
 -   Change the parameter value along the range
 
@@ -119,11 +119,11 @@ l_basecase_results <- model(l_prms); l_basecase_results
 
 ```{r}
 #| echo: true
-rr_drug_min = 0.2; rr_drug_max = 0.6; l_prms_temp <- l_prms
-l_prms_temp[["rr_death_drug"]] <- rr_drug_min #Min value
-result_rr_drug_min = model(l_prms_temp)
-l_prms_temp[["rr_death_drug"]] <- rr_drug_max #Max value
-result_rr_drug_max = model(l_prms_temp)
+rrDrug_min = 0.2; rrDrug_max = 0.6; prms_temp <- prms
+prms_temp[["rr_death_drug"]] <- rrDrug_min #Min value
+result_rrDrug_min = model(prms_temp)
+prms_temp[["rr_death_drug"]] <- rrDrug_max #Max value
+result_rrDrug_max = model(prms_temp)
 ```
 
 ::::: columns
@@ -131,7 +131,7 @@ result_rr_drug_max = model(l_prms_temp)
 Min rr death with drug
 
 ```{r}
-result_rr_drug_min
+result_rrDrug_min
 ```
 :::
 
@@ -139,7 +139,7 @@ result_rr_drug_min
 Max rr of death with drug
 
 ```{r}
-result_rr_drug_max
+result_rrDrug_max
 ```
 :::
 :::::
@@ -152,34 +152,34 @@ result_rr_drug_max
 
     -   As parameter $\uparrow$, outcome $\downarrow$
 
--   If you know it's monotonic, can just run the max, min, and basecase values
+-   If you're certain it's monotonic, can just run the max, min, and basecase values
 
--   If any doubt, check several points and plot
+-   If any doubt, can check several points and plot
 
 ## OWSA plot: single input parameter
 
 ```{r}
 #| echo: true
 t_rr_drug_owsa <- data.frame(
-  rr_death_drug = seq(from=rr_drug_min, to=rr_drug_max, length.out=20),
+  rr_death_drug = seq(from=rrDrug_min, to=rrDrug_max, length.out=20),
   ICER_treat = 0)
 for (row in 1:nrow(t_rr_drug_owsa)){
-  l_prms_temp <- l_prms
-  l_prms_temp[["rr_death_drug"]] <- t_rr_drug_owsa[row, "rr_death_drug"]
-  t_rr_drug_owsa[row, "ICER_treat"] <- model(l_prms_temp)$ICER_treat}
+  prms_temp <- prms
+  prms_temp[["rr_death_drug"]] <- t_rr_drug_owsa[row, "rr_death_drug"]
+  t_rr_drug_owsa[row, "ICER_treat"] <- model(prms_temp)$ICER_treat}
 ggplot(data=t_rr_drug_owsa, aes(x=rr_death_drug, y=ICER_treat))+
   geom_point()+geom_line()
 ```
 
 ## OWSA on all input parameters
 
-All uncertain parameters assigned min and max value
+Assign a min and max plausible value to all uncertain parameters
 
 ```{r}
 #| echo: true
 t_owsa <- data.frame(
-  name = names(l_prms),
-  value = unname(unlist(l_prms)),
+  name = names(prms),
+  value = unname(unlist(prms)),
   value.min = c(30000, .16, .2, 9, 8000),
   value.max = c(100000, .45, .6, 16, 16000),
   ICER.min = 0,  ICER.max = 0)
@@ -189,18 +189,18 @@ t_owsa
 
 ## OWSA on all input parameters
 
-Loop over parameters, calculate outcome at min and max value
+For each parameters, calculate outcome at min and max value
 
 ```{r}
 #| echo: true
 for (row in 1:nrow(t_owsa)){
-  l_prms_temp <- l_prms # Reset to base case value (IMPORTANT!!!!)
+  prms_temp <- prms #Reset to base case value (IMPORTANT!!!!)
   # Calculate ICER with parameter at min value
-  l_prms_temp[[t_owsa[row,"name"]]] <- t_owsa[row,"value.min"]
-  t_owsa[row, "ICER.min"] <- model(l_prms_temp)$ICER_treat
+  prms_temp[[t_owsa[row,"name"]]] <- t_owsa[row,"value.min"]
+  t_owsa[row, "ICER.min"] <- model(prms_temp)$ICER_treat
   # Calculate ICER with parameter at max value
-  l_prms_temp[[t_owsa[row,"name"]]] <- t_owsa[row,"value.max"]
-  t_owsa[row, "ICER.max"] <- model(l_prms_temp)$ICER_treat
+  prms_temp[[t_owsa[row,"name"]]] <- t_owsa[row,"value.max"]
+  t_owsa[row, "ICER.max"] <- model(prms_temp)$ICER_treat
 }
 # Add column for range of the ICER (absolute value)
 t_owsa$ICER.range <- abs(t_owsa$ICER.max - t_owsa$ICER.min); t_owsa
@@ -213,7 +213,7 @@ Vertical line at base case result (**black**) and decision threshold (**red**). 
 ```{r}
 #| echo: true
 p_tornado <- ggplot(data = t_owsa) +
-  geom_segment(aes(x = reorder(name, ICER.range), #biggest to smallest ICER range
+  geom_segment(aes(x = reorder(name, ICER.range), # largest to smallest ICER range
                    xend=reorder(name, ICER.range), 
                    y = ICER.min, 
                    yend=ICER.max), size=6, color="grey")+
@@ -235,7 +235,7 @@ p_tornado <- ggplot(data = t_owsa) +
 p_tornado
 ```
 
-## Example tornado: Is pathogen inactivation in Ghana cost-saving?
+## Ex: Is pathogen inactivation in Ghana cost-saving?
 
 ![](figs/wbpr_ghana_tornado.png)
 
@@ -244,53 +244,53 @@ p_tornado
 ::::: columns
 ::: {.column width="65%"}
 ![](figs/zika_owsa.png)
+
+[Russell et. al. 2019](https://doi.org/10.7326/M18-2238)
 :::
 
 ::: {.column width="35%"}
--   One approach
+-   Tornado-like diagram
 
--   X-axis: changing parameter value two standard deviations from mean
+-   [**X-axis:**]{.underline} changing parameter value ±2 standard deviations from base case
 
--   Parameter value at base case and thresholds for change in preferred strategy in red text.
+-   Red text indicates parameter value at which preferred strategy changes.
 :::
 :::::
 
 ## Two way sensitivity analysis (TWSA)
 
-Simultaneously change a [**pair**]{.underline} of parameters over plausible range
+Change a [**pair**]{.underline} of parameters over plausible ranges
 
 ```{r}
 #| echo: true
 # Make grid with each of 20 possible values for each parameter
-rr_death_drug = seq(from=rr_drug_min, to=rr_drug_max, length.out=20)
+rr_death_drug = seq(from=rrDrug_min, to=rrDrug_max, length.out=20)
 prob_death_noTreat = seq(from=.16, to=.45, length.out=20)
 
 t_twoway <- expand.grid(rr_death_drug=rr_death_drug, 
                         prob_death_noTreat=prob_death_noTreat)
-
-# Add column for the ICER
-t_twoway$ICER <- 0
+t_twoway$ICER <- 0 # Add column for the ICER
 
 head(t_twoway)
 ```
 
 ## Two way sensitivity analysis (TWSA)
 
-Simultaneously change a [**pair**]{.underline} of parameters over plausible range
+Change a [**pair**]{.underline} of parameters over plausible ranges
 
 ```{r}
 #| echo: true
 # Run model & save ICER for each combo of the parameters
-l_prms_temp <- l_prms
+prms_temp <- prms
 
 for (row in 1:nrow(t_twoway)){
-  l_prms_temp[["rr_death_drug"]] <- t_twoway[row,"rr_death_drug"]
-  l_prms_temp[["prob_death_noTreat"]] <- t_twoway[row,"prob_death_noTreat"]
-  t_twoway[row,"ICER"] <- model(l_prms_temp)$ICER_treat}
+  prms_temp[["rr_death_drug"]] <- t_twoway[row,"rr_death_drug"]
+  prms_temp[["prob_death_noTreat"]] <- t_twoway[row,"prob_death_noTreat"]
+  t_twoway[row,"ICER"] <- model(prms_temp)$ICER_treat}
 head(t_twoway)
 ```
 
-## TWSA plot of continuous outcome (ICER)
+## TWSA plot of ICER
 
 ```{r}
 #| echo: true
@@ -313,17 +313,27 @@ ggplot(data=t_twoway, aes(x=rr_death_drug, y=prob_death_noTreat, fill=preferred)
 
 ::::: columns
 ::: {.column width="45%"}
-![](figs/blood_safety_portfoloi_WTP_scenarios.png)
+![](figs/blood_safety_portfoloi_WTP_scenarios.png){width="433"}
 :::
 
 ::: {.column width="55%"}
-![](figs/outcomes_by_prevalence.png)
+![](figs/outcomes_by_prevalence.png){width="473"}
 :::
 :::::
 
+[Russell et. al. 2021](https://doi.org/10.1007/s10729-021-09557-1)
+
 ## 3-way sensitivity analysis example
 
-[![Cost analysis of mobile health TB contact investigation, Turimumahoro et. al. 2022](figs/three_way_sens_analysis_TB_mHealth.png)](https://doi.org/10.1371/journal.pone.0265033)
+::::: columns
+::: {.column width="70%"}
+![](figs/three_way_sens_analysis_TB_mHealth.png){width="678"}
+:::
+
+::: {.column width="30%"}
+[Cost analysis of mobile health TB contact investigation. Turimumahoro et. al. 2022](https://doi.org/10.1371/journal.pone.0265033)
+:::
+:::::
 
 ## Scenario analysis
 
@@ -357,7 +367,7 @@ ggplot(data=t_twoway, aes(x=rr_death_drug, y=prob_death_noTreat, fill=preferred)
 
 -   Deterministic methods ignore fact that all values in parameter's plausible range are not equally likely
 
-**Want to know:** how certain are our results given [**all**]{.underline} the uncertainty in [**all**]{.underline} parameters?
+**Want to know:** how robust are our results to [**all**]{.underline} the uncertainty in [**all**]{.underline} parameters?
 
 ## Recall: uncertainty in Bayesian terms
 
@@ -367,9 +377,9 @@ ggplot(data=t_twoway, aes(x=rr_death_drug, y=prob_death_noTreat, fill=preferred)
 :::
 
 ::: {.column width="30%"}
-**Posterior** $\rightarrow$ parameter uncertainty
-
 **Sampling distn** $\rightarrow$ stochastic uncertainty
+
+**Posterior** $\rightarrow$ parameter uncertainty
 
 **Posterior predictive distn** $\rightarrow$ uncertainty in outcomes
 :::
@@ -383,7 +393,7 @@ ggplot(data=t_twoway, aes(x=rr_death_drug, y=prob_death_noTreat, fill=preferred)
 
 3.  Run model and calculate outcomes for each parameter set
 
-From the output, you can:
+From the PSA output, you can:
 
 -   Report quantile-based credible intervals:
 
@@ -391,7 +401,7 @@ From the output, you can:
 
 -   Make probabilistic statements:
 
-    -   *Treatment was cost-effective in 87% of iterations*
+    -   *Treatment was cost-effective in 87% of PSA iterations*
 
 ## Common PSA distributions
 
@@ -411,19 +421,19 @@ From the output, you can:
 
 Mainly used when 'expert opinion' is main data source
 
-[**Remember**]{.underline}: We want experts' estimate of uncertainty in parameter mean, not individual-level variance
+[**Remember**]{.underline}: We usually want experts' estimate of uncertainty in parameter mean, not individual-level variance
 
-## Multi-outcome probabilities
+## Multinomial probabilities
 
 -   Probability of each branches from decision tree node (or transitions from Markov state) must sum to 1
 
--   2 outcomes: no problem. Sample P(A), set P(B) = 1 - P(A)
+-   [**2 outcomes:**]{.underline} no problem. Sample P(A), set P(B) = 1 - P(A)
 
 -   \>2 outcomes but most small proability: Can calculate P(big) as 1 - sum(P(smalls)), might be OK
 
 What if \>2 outcomes are possible and plausible?
 
-## Dirichlet: beta for multi-outcome probabilities
+## Dirichlet: beta for multinomial probabilities
 
 ::::: columns
 ::: {.column width="60%"}
@@ -439,7 +449,7 @@ What if \>2 outcomes are possible and plausible?
 :::
 :::::
 
-## Where Dirichlet is used for PSA?
+## Where can Dirichlet be used for PSA?
 
 -   Each row of a transition matrix
 
@@ -485,9 +495,11 @@ v_psa_cost_survive <- rlnorm(n, meanlog=cost_survive_lnorm[["meanlog"]],
 
 ## Note
 
-The [**expected value (mean)**]{.underline} of a PSA distribution should be the base case value. For asymmetric distributions, median will not equal the mean. To simplify this in-class example, I set the base case value as the median.
+The [**expected value (mean)**]{.underline} of a PSA distribution should be the base case value. For asymmetric distributions, median will not equal the mean.
 
-In assignment four, I provide functions to fit a distribution to the mean and two quantiles (e.g., 0.025 and 0.975 percentile)
+-   To simplify this in-class example, I set the base case value as the median.
+
+-   Assignment 4 will include functions to fit a distribution to the mean and two quantiles (e.g., 0.025 and 0.975 percentile)
 
 ## Ex: run model for each PSA input set
 
@@ -499,11 +511,11 @@ t_psa <- data.frame(
   rr_death_drug = v_psa_rr_death_drug,
   QALY_survive = v_psa_QALY_survive,
   cost_survive = v_psa_cost_survive)
-l_prm_temp <- as.list(t_psa[row,])
-psa_output <- data.frame(model(l_prm_temp))
+prm_temp <- as.list(t_psa[row,])
+psa_output <- data.frame(model(prm_temp))
 for (row in 2:nrow(t_psa)){
-  l_prm_temp <- as.list(t_psa[row,])
-  psa_output <- rbind(psa_output, data.frame(model(l_prm_temp)))
+  prm_temp <- as.list(t_psa[row,])
+  psa_output <- rbind(psa_output, data.frame(model(prm_temp)))
 }
 t_psa <- cbind(t_psa, psa_output); head(t_psa, 3)
 ```
@@ -558,7 +570,7 @@ plot(psa_obj)
 
 ## Preferred strategy by WTP level
 
--   Can determine preferred strategy with incremental analysis for each PSA iteration at each willingness-to-pay level with nested loops, like assignment 1, but [**inefficient**]{.underline}
+-   Can determine preferred strategy with incremental analysis for each PSA iteration at each willingness-to-pay level with nested loops (like assignment 1) but [**inefficient**]{.underline}
 
 -   Instead, calculate [**net monetary benefit**]{.underline} at each WTP level for each strategy in each PSA iteration
 
@@ -602,18 +614,18 @@ p_ceac <- plot(ceac_obj)+ylab("Pr Most Cost-Effective"); p_ceac
 
 ## Cost-effectiveness acceptability curve
 
--   X-axis: willingness-to-pay thresholds
+-   [X-axis:]{.underline} willingness-to-pay thresholds
 
--   Y-axis: estimated probability intervention preferred (most cost-effective) given WTP
+-   [Y-axis:]{.underline} estimated probability intervention preferred (most cost-effective) given WTP
 
 -   **Frontier**: intervention with the greatest expected NMB
 
     -   Optimal strategy is one that maximizes expected NMB
-    -   Sometimes different from strategy with the greatest probability of being preferred
+    -   Sometimes differs from strategy with the greatest probability of being preferred
 
 ## More on frontier
 
-For a WTP, intervention with the greatest probability of cost-effectiveness may not be the intervention with the greatest expected NMB
+Strategy with the greatest probability of cost-effectiveness may not have the largest expected NMB.
 
 ::::: columns
 ::: {.column width="60%"}
@@ -628,8 +640,8 @@ For PSA data on the right
 ```{r}
 psa_nmb <- tibble(
   psa_iter = 1:4,
-  NMB_A = c(5,6,9,25),
-  NMB_B = c(4,7,8,3)
+  NMB_A = c(2,3,2,25),
+  NMB_B = c(3,4,3,3)
 )
 psa_nmb
 ```
@@ -638,7 +650,7 @@ psa_nmb
 
 ## More on frontier
 
-For a WTP, intervention with the greatest probability of cost-effectiveness may not be the intervention with the greatest expected NMB
+Strategy with the greatest probability of cost-effectiveness may not have the largest expected NMB.
 
 ```{r}
 #| echo: true
@@ -661,7 +673,7 @@ Compares all policies to a "status quo" (does not consider incremental analysis/
 
 ## Expected loss curve
 
-Expected loss = expected net monitary benefit foregone by choosing less-than-optimal intervention
+Expected net monitary benefit foregone because you choose a less-than-optimal intervention
 
 ```{r}
 #| echo: true
@@ -674,7 +686,9 @@ plot(el, n_x_ticks = 8, n_y_ticks = 6)
 
 -   **Parameters estimated with uncertainty** should all be varied in PSA
 
--   **Design parameters** like discount rate, time horizon can be analyzed in scenario analysis
+-   **Design parameters** like discount rate, time horizon should not
+
+    -   Can analyze in scenario analysis
 
 ## Credible intervals from PSA output
 
@@ -694,7 +708,7 @@ sapply(t_psa, function(x) paste0(round(mean(x),2), " (95% CrI ",
 
 -   In principle, inputs to PSA should be sampled from the joint probability distribution of all uncertain parameters (accounting for correlation)
 
--   In practice, we often treat PSA inputs as independent
+-   In practice, analysts often treat PSA inputs as independent
 
     -   Probably overestimates uncertainty in most cases
     -   Should try to account for correlation between parameters when it's likely to matter
@@ -761,12 +775,12 @@ Can fit multivariate distributions to data
 
 ## Logistics
 
--   Assignment 3 (simulation) **deadline extended: Mon, Oct 7**
+-   Complete reading before next class
 
--   Assignment 4 (sensitivity analysis) due Fri, Oct 25
+-   **Assignment 3: Simulation** due Mon, Feb 16
 
--   Project proposal due Fri, Nov 1
+-   **Project proposal** due Fri, February 27
 
-    -   I suggest discussing your idea with me before proposal deadline
+-   Student presentations of open source model in class on Thurs, March 12
 
--   Presentation of open-source modelling paper in class on Tues, Nov 5
+-   Office hours: Mondays 2:30pm to 3:30pm, room 1128
