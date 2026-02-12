@@ -12,23 +12,46 @@ editor: visual
 ```{r}
 #| echo: true
 
-
+library(ggplot2)
+theme_set(theme_bw()) #set ggplot theme
 #use install.packages("Package") for any you don't have already
 
-theme_set(theme_bw()) #set ggplot theme
+
 ```
 
 ## Today
 
--   **Intro to DEQ and compartmental infectious disease models**
+-   [**Probabilistic sensitivity analysis (Cont.)**]{.underline}
+-   Intro to Differential equations
+-   Compartmental infectious disease models
+-   System dynamics models
+
+## Today
+
+-   Probabilistic sensitivity analysis (Cont.)
+-   [**Intro to Differential equations**]{.underline}
+-   Compartmental infectious disease models
+-   System dynamics models
 
 ## Differential equation models
 
--   Most common method for [**continuous time**]{.underline} cohort modeling
+Used to model dynamic systems in physics, engineering, biology, ecology, and epidemiology
+
+Describe system changes over time using equations that relate rates of change to current state of system
+
+## Types of differential equations
+
+-   Ordinary differential equations (ODEs): involve functions of one variable and their derivatives
+
+-   Partial differential equations (PDEs): involve functions of multiple variables and their partial derivatives
+
+## DiffEq models in health decision analysis
+
+-   Common approach to [**continuous time cohort**]{.underline} modeling
 
 -   Transitions depend on how cohort distributed across states (compartments)
 
--   Very useful for modeling epidemics
+-   Useful for modeling epidemics
 
 -   Often approximated with difference equations
 
@@ -46,7 +69,24 @@ Differences from discrete time CSTMs
 
 -   Continuous time (unless using difference eqn approximation)
 
--   Transition rates can depend how population cohort is distributed across states in that instant
+-   Transition can depend on
+
+    -   Time
+
+    -   Current status of other compartments
+
+    -   Other factors
+
+## Differential equation basics
+
+-   
+
+## Today
+
+-   Probabilistic sensitivity analysis (Cont.)
+-   Intro to Differential equations
+-   [**Compartmental infectious disease models**]{.underline}
+-   System dynamics models
 
 ## SIR model
 
@@ -148,9 +188,4 @@ $\beta^*$ and $\mu^*$ are discrete analogs for $\beta$ and $\mu$ and their value
 
 -   Differential (difference) equation models useful when distribution of population across states influences transitions (e.g., infectious diseases)
 
-## Logistics
-
--   Assignment 1 (cost-effectiveness, decision trees) due Friday 9/13
--   Assignment 2 CSTM; due Wednesday 9/25
--   Next class: workflow for reproducible research
--   Office hours 1:30 - 2:20pm, room #1103
+## 

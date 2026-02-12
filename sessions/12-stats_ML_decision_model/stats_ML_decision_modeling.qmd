@@ -1,21 +1,22 @@
 ---
 title: "Stats/ML methods and decision modelling"
-subtitle: "EPIB  676 session 12, McGill University"
+subtitle: "EPIB  678 session 12, McGill University"
 author: "Alton Russell"
-date: "8 Oct 2024"
+date: "12 Feb 2025"
 format: revealjs
 editor: visual
 ---
 
-## To look into
-
-<https://journals.sagepub.com/doi/full/10.1177/0272989X241279459>
-
 ## Today
 
+-   [**Probabilistic sensitivity analysis (Cont.)**]{.underline}
 -   Using stats/ML in decision analysis
     -   Multi-state modeling survival analysis
     -   Machine learning example
+
+## Continuing material on PSA
+
+<https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/11-uncertainty_analysis/uncertainty_analysis.html#/cost-effectiveness-acceptability-curve-1>
 
 ## Stats/ML vs. decision models
 
@@ -33,7 +34,7 @@ editor: visual
 ::: {.column width="50%"}
 **Decision-analytic models**
 
--   Integrate (data-informed) paramters
+-   Integrate (data-informed) parameters
 
 -   Traditionally for estimating 'average' policy impact
 
@@ -67,11 +68,11 @@ Typical decision models [**embed causal assumptions**]{.underline} and [**extrap
 
     -   Consent to access clinical/administrative data on health resource utilization
 
-    -   Periodic survey to derive health-related quality of life weights & non-health outcomes (productivity, caregiver, time costs)
+    -   Periodic surveys to derive health-related quality of life weights & non-health outcomes (productivity, caregiver, time costs)
 
 ## Trial-based economic evaluation
 
-Statistical methods for conducting CEA over time horizon of the trial
+Statistical methods often sufficient for conducting CEA over time horizon of the trial
 
 -   Missing data imputation
 
@@ -81,7 +82,7 @@ Statistical methods for conducting CEA over time horizon of the trial
 
 -   Bootstrapping for probabilistic sensitivity analysis
 
-Extrapolating over patient lifetime requires modeling
+Extrapolating over patient lifetime may use mathematical modeling
 
 ## Tutorial for trial-based economic evaluation
 
@@ -126,7 +127,7 @@ Not main focus of this class, but here is a helpful tutorial
 
 -   If event observed, we have exact time to event
 
--   Usually some individuals right censored (end of follow-up)
+-   Often, some individuals right censored (end of follow-up)
 
 -   Ex. time to diagnosis, time to death
 
@@ -136,7 +137,7 @@ Not main focus of this class, but here is a helpful tutorial
 
 -   Observe if an event happened between last observation and this one
 
--   Ex. chlamydia infection between this screen and the last one
+-   Ex. chlamydia infection between screen $n$ and $n-1$
 
 ## Tutorial data source
 
@@ -166,7 +167,9 @@ Not main focus of this class, but here is a helpful tutorial
 
 -   Covariates (e.g., history, sex) can increase or decrease average time to events
 
--   Hazard ratios estimated for covariates (\>1 if covariate decreases time-to-event)
+-   Hazard ratios estimated for covariates
+
+    -   HR \>1 if covariate associated with shorter time-to-event
 
 -   Proportional hazards means they can be multiplied to estimate mean time-to-event
 
@@ -205,7 +208,7 @@ Lines fairly parallel, suggesting proportional hazards reasonable
 | Treatment                   | 1.555 (0.874, 2.7666) | 0.133   |
 | Time spent progression free | 0.413 (0.215, 0.794)  | 0.008   |
 
--   Time progression-free impacts progression → death transition
+-   "Time spent progression-free" impacts progression → death transition
 
 -   Markov property doesn't hold; semi-Markov model needed.
 
@@ -257,7 +260,7 @@ Lines fairly parallel, suggesting proportional hazards reasonable
 
 ## Life years, costs, QALYs
 
-Used data from the trial for mean cost/QALYs of progression-free & progressed under each intervention.
+Used data from the trial for mean cost/QALYs of "progression-free" & "progressed" under each intervention.
 
 ![](figs/williams_costs.png)
 
@@ -287,12 +290,12 @@ Used data from the trial for mean cost/QALYs of progression-free & progressed un
 
 ## Logistics
 
--   Assignment 4 (sensitivity analysis) due Fri, Oct 25
+-   Complete reading before next class
 
--   Project proposal due Fri, Nov 1
+-   **Assignment 3: Simulation** due Mon, Feb 16
 
-    -   I suggest discussing your idea with me before proposal deadline
+-   **Project proposal** due Fri, February 27
 
--   Presentation of open-source modelling paper in class on Tues, Nov 5
+-   Student presentations of open source model in class on Thurs, March 12
 
--   Office hours on Zoom today (same link)
+-   Office hours: Mondays 2:30pm to 3:30pm, room 1128

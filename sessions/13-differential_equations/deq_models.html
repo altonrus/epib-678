@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="stats_ML_decision_modeling_files/libs/clipboard/clipboard.min.js"></script>
-<script src="stats_ML_decision_modeling_files/libs/quarto-html/tabby.min.js"></script>
-<script src="stats_ML_decision_modeling_files/libs/quarto-html/popper.min.js"></script>
-<script src="stats_ML_decision_modeling_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="stats_ML_decision_modeling_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="stats_ML_decision_modeling_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="stats_ML_decision_modeling_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="stats_ML_decision_modeling_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="deq_models_files/libs/clipboard/clipboard.min.js"></script>
+<script src="deq_models_files/libs/quarto-html/tabby.min.js"></script>
+<script src="deq_models_files/libs/quarto-html/popper.min.js"></script>
+<script src="deq_models_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="deq_models_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="deq_models_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="deq_models_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="deq_models_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.47">
 
   <meta name="author" content="Alton Russell">
-  <meta name="dcterms.date" content="2024-10-08">
-  <title>Stats/ML methods and decision modelling</title>
+  <meta name="dcterms.date" content="2026-02-12">
+  <title>Differential equations modells</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="stats_ML_decision_modeling_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="stats_ML_decision_modeling_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="deq_models_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="deq_models_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -30,12 +30,77 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="stats_ML_decision_modeling_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="stats_ML_decision_modeling_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="stats_ML_decision_modeling_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="stats_ML_decision_modeling_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="stats_ML_decision_modeling_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="deq_models_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="deq_models_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="deq_models_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="deq_models_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="deq_models_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -327,7 +392,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Stats/ML methods and decision modelling</h1>
+  <h1 class="title">Differential equations modells</h1>
   <p class="subtitle">EPIB 676 session 12, McGill University</p>
 
 <div class="quarto-title-authors">
@@ -338,306 +403,187 @@ Alton Russell
 </div>
 </div>
 
-  <p class="date">2024-10-08</p>
+  <p class="date">2026-02-12</p>
+</section>
+<section id="packages" class="slide level2">
+<h2>Packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href=""></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co">#set ggplot theme</span></span>
+<span id="cb1-3"><a href=""></a><span class="co">#use install.packages("Package") for any you don't have already</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="today" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li>Using stats/ML in decision analysis
-<ul>
-<li>Multi-state modeling survival analysis</li>
-<li>Machine learning example</li>
-</ul></li>
+<li><u><strong>Probabilistic sensitivity analysis (Cont.)</strong></u></li>
+<li>Intro to Differential equations</li>
+<li>Compartmental infectious disease models</li>
+<li>System dynamics models</li>
 </ul>
 </section>
-<section id="statsml-vs.-decision-models" class="slide level2">
-<h2>Stats/ML vs.&nbsp;decision models</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Stats &amp; ML</strong></p>
-<ul>
-<li><p>Derive insights from data</p></li>
-<li><p>Methods for understanding/estimating heterogeneity</p></li>
-<li><p>Good at understanding “<strong>what is</strong>” from complete data</p></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Decision-analytic models</strong></p>
-<ul>
-<li><p>Integrate (data-informed) paramters</p></li>
-<li><p>Traditionally for estimating ‘average’ policy impact</p></li>
-<li><p>Good at extrapolating, asking “<strong>what if</strong>” using incomplete/unlinked data</p></li>
-</ul>
-</div></div>
-</section>
-<section id="causal-inference" class="slide level2">
-<h2>Causal inference</h2>
-<p>Identifying causal relationship requires causal methods</p>
-<ul>
-<li><p>Statistical methods for causal inference</p></li>
-<li><p>Causal ML (note: most ML methods are not causal)</p></li>
-</ul>
-<p>Typical decision models <u><strong>embed causal assumptions</strong></u> and <u><strong>extrapolate</strong></u> to quantify outcomes</p>
-<ul>
-<li>Ideally, causal assumptions based on well-done causal inference studies (randomized trial or quasi-experimental study)</li>
-</ul>
+<section id="continuing-material-on-psa" class="slide level2">
+<h2>Continuing material on PSA</h2>
+<p><a href="https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/11-uncertainty_analysis/uncertainty_analysis.html#/cost-effectiveness-acceptability-curve-1" class="uri">https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/11-uncertainty_analysis/uncertainty_analysis.html#/cost-effectiveness-acceptability-curve-1</a></p>
 </section>
 <section id="today-1" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li><strong>Using stats/ML in decision analysis</strong>
+<li>Probabilistic sensitivity analysis (Cont.)</li>
+<li><u><strong>Intro to Differential equations</strong></u></li>
+<li>Compartmental infectious disease models</li>
+<li>System dynamics models</li>
+</ul>
+</section>
+<section id="differential-equation-models" class="slide level2">
+<h2>Differential equation models</h2>
+<p>Used to model dynamic systems in physics, engineering, biology, ecology, and epidemiology</p>
+<p>Describe system changes over time using equations that relate rates of change to current state of system</p>
+</section>
+<section id="types-of-differential-equations" class="slide level2">
+<h2>Types of differential equations</h2>
 <ul>
-<li>Multi-state modeling survival analysis</li>
-<li>Machine learning example</li>
+<li><p>Ordinary differential equations (ODEs): involve functions of one variable and their derivatives</p></li>
+<li><p>Partial differential equations (PDEs): involve functions of multiple variables and their partial derivatives</p></li>
+</ul>
+</section>
+<section id="diffeq-models-in-health-decision-analysis" class="slide level2">
+<h2>DiffEq models in health decision analysis</h2>
+<ul>
+<li><p>Common approach to <u><strong>continuous time cohort</strong></u> modeling</p></li>
+<li><p>Transitions depend on how cohort distributed across states (compartments)</p></li>
+<li><p>Useful for modeling epidemics</p></li>
+<li><p>Often approximated with difference equations</p></li>
+</ul>
+</section>
+<section id="differential-equation-models-1" class="slide level2">
+<h2>Differential equation models</h2>
+<p>Similarities to discrete time CSTMs</p>
+<ul>
+<li><p>Individual in one state (compartment) at a time</p></li>
+<li><p>Individuals in state treated identically</p></li>
+<li><p>Transition between states over time</p></li>
+</ul>
+<p>Differences from discrete time CSTMs</p>
+<ul>
+<li><p>Continuous time (unless using difference eqn approximation)</p></li>
+<li><p>Transition can depend on</p>
+<ul>
+<li><p>Time</p></li>
+<li><p>Current status of other compartments</p></li>
+<li><p>Other factors</p></li>
 </ul></li>
 </ul>
 </section>
-<section id="trial-based-economic-evaluation" class="slide level2">
-<h2>Trial-based economic evaluation</h2>
+<section id="differential-equation-basics" class="slide level2">
+<h2>Differential equation basics</h2>
 <ul>
-<li><p>Increasingly, trials designed with cost-effectiveness component</p></li>
-<li><p>Data collection plan for costs and QALY estimation</p>
-<ul>
-<li><p>Consent to access clinical/administrative data on health resource utilization</p></li>
-<li><p>Periodic survey to derive health-related quality of life weights &amp; non-health outcomes (productivity, caregiver, time costs)</p></li>
-</ul></li>
+<li></li>
 </ul>
-</section>
-<section id="trial-based-economic-evaluation-1" class="slide level2">
-<h2>Trial-based economic evaluation</h2>
-<p>Statistical methods for conducting CEA over time horizon of the trial</p>
-<ul>
-<li><p>Missing data imputation</p></li>
-<li><p>Regressing cost/QALYs for subgroup analysis</p>
-<ul>
-<li>seemingly unrelated regression to capture correlation</li>
-</ul></li>
-<li><p>Bootstrapping for probabilistic sensitivity analysis</p></li>
-</ul>
-<p>Extrapolating over patient lifetime requires modeling</p>
-</section>
-<section id="tutorial-for-trial-based-economic-evaluation" class="slide level2">
-<h2>Tutorial for trial-based economic evaluation</h2>
-<p>Not main focus of this class, but here is a helpful tutorial</p>
-<p><a href="https://doi.org/10.1007/s40273-023-01301-7">Ben et. al.&nbsp;(2023). Conducting trial-based economic evaluations using R: A tutorial. PharmacoEconomics 41:1403–1413</a></p>
 </section>
 <section id="today-2" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li>Using data-driven models in decision analysis
-<ul>
-<li><strong>Multi-state modeling survival analysis</strong></li>
-<li>Machine learning example</li>
-</ul></li>
-<li>Clinical prediction model development through decision-analytic lens</li>
+<li>Probabilistic sensitivity analysis (Cont.)</li>
+<li>Intro to Differential equations</li>
+<li><u><strong>Compartmental infectious disease models</strong></u></li>
+<li>System dynamics models</li>
 </ul>
 </section>
-<section id="multi-state-survival-modeling" class="slide level2">
-<h2>Multi-state survival modeling</h2>
+<section id="sir-model" class="slide level2">
+<h2>SIR model</h2>
+<p>Three states: <u><strong>S</strong></u>usceptible, <u><strong>I</strong></u>nfectious, <u><strong>R</strong></u>emoved (recovered or dead)</p>
+<p>Infection rate <span class="math inline">\(\beta\)</span> governs S <span class="math inline">\(\rightarrow\)</span> I</p>
+<p>Removal rate <span class="math inline">\(\mu\)</span> governs S <span class="math inline">\(\rightarrow\)</span> R</p>
 
-<img data-src="figs/Williams%202017%20multistatemodel%20tutorial.png" class="r-stretch"><p><a href="https://doi.org/10.1177/0272989X16651869">Williams et. al.&nbsp;2017</a></p>
-<p><a href="https://www.gla.ac.uk/schools/healthwellbeing/research/hehta/cwilliams/">Supplemental material</a></p>
-</section>
-<section id="competing-risks" class="slide level2">
-<h2>Competing risks</h2>
+<img data-src="figs/sir_compartments.png" class="r-stretch"></section>
+<section id="differential-equations-for-sir" class="slide level2">
+<h2>Differential equations for SIR</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><p>Cancer treatment trials often report ‘progression-free’ and ‘overall’ survival for limited time horizon</p></li>
-<li><p>Model can extrapolate to lifetime horizon</p></li>
-<li><p>Must account for competing risks</p></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><img data-src="figs/williams_model_diagram.png"></p>
+<div class="column" style="width:40%;">
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\frac{dS}{dt}= -\beta S I\\
+&amp;\frac{dI}{dt} = \beta S I - \mu I\\
+&amp;\frac{dR}{dt} = \mu I
+\end{aligned}
+\]</span></p>
+</div><div class="column" style="width:60%;">
+<p><span class="math display">\[
+\begin{aligned}
+&amp;S(t+m) = S(t) + \int_t^m -\beta S I dt\\
+&amp;I(t+m) = I(t) + \int_t^m (\beta S I - \mu I)dt\\
+&amp;R(t+m) = R(t) + \int_t^m \mu I dt
+\end{aligned}
+\]</span></p>
 </div></div>
-</section>
-<section id="panel-vs.-survival-data" class="slide level2">
-<h2>Panel vs.&nbsp;survival data</h2>
-<p><strong>Survival data</strong></p>
-<ul>
-<li><p>If event observed, we have exact time to event</p></li>
-<li><p>Usually some individuals right censored (end of follow-up)</p></li>
-<li><p>Ex. time to diagnosis, time to death</p></li>
-</ul>
-<p><strong>Panel data</strong></p>
-<ul>
-<li><p>Data collected at specific intervals</p></li>
-<li><p>Observe if an event happened between last observation and this one</p></li>
-<li><p>Ex. chlamydia infection between this screen and the last one</p></li>
-</ul>
-</section>
-<section id="tutorial-data-source" class="slide level2">
-<h2>Tutorial data source</h2>
-<ul>
-<li><p>Trial of first-line treatment for chronic lymphocytic leukemia</p>
-<ul>
-<li><p>RFC: rituximab + fludarabine + cyclophosphamide (403 patients)</p></li>
-<li><p>FC: fludarabine + cyclophosphamide (407 patients)</p></li>
-</ul></li>
-<li><p>Trial horizon 4 years (many patients alive at trial end)</p></li>
-<li><p>Model horizon 15 years (estimate &lt;2% cohort alive)</p></li>
-</ul>
-</section>
-<section id="steps" class="slide level2">
-<h2>Steps</h2>
 
-<img data-src="figs/williams_process_overview.png" class="r-stretch"></section>
-<section id="markov-or-semi-markov" class="slide level2">
-<h2>Markov or semi-Markov?</h2>
-<ul>
-<li><p><strong>Markov assumption:</strong> future transitions depend only on the current state (not history)</p></li>
-<li><p>If violated, can use state-arrival <strong><em>extended</em></strong> multi-state model to include covariates in transitions</p></li>
-</ul>
-</section>
-<section id="cox-proportional-hazard-model" class="slide level2">
-<h2>Cox proportional hazard model</h2>
-<ul>
-<li><p>Semi-parametric model of time until an event</p></li>
-<li><p>Covariates (e.g., history, sex) can increase or decrease average time to events</p></li>
-<li><p>Hazard ratios estimated for covariates (&gt;1 if covariate decreases time-to-event)</p></li>
-<li><p>Proportional hazards means they can be multiplied to estimate mean time-to-event</p></li>
-</ul>
-</section>
-<section id="assessing-markovian-proportional-hazard-assumptions" class="slide level2">
-<h2>Assessing Markovian &amp; proportional hazard assumptions</h2>
-<ul>
-<li><p>log-log plot</p></li>
-<li><p>Cumulative hazard vs.&nbsp;time</p></li>
-<li><p>Fit cox models</p></li>
-</ul>
-</section>
-<section id="log-log-plots" class="slide level2">
-<h2>Log-log plots</h2>
+<img data-src="figs/sir_compartments.png" class="r-stretch"></section>
+<section id="sir" class="slide level2">
+<h2>SIR</h2>
 
-<img data-src="figs/williams%20loglog.png" class="r-stretch"><p>Lines fairly parallel, suggesting proportional hazards reasonable</p>
-</section>
-<section id="cumulative-hazards-vs.-time" class="slide level2">
-<h2>Cumulative hazards vs.&nbsp;time</h2>
+<img data-src="figs/sir_slide.png" class="r-stretch"></section>
+<section id="bigger-r0-means-bigger-and-shorter-epidemic" class="slide level2">
+<h2>Bigger R0 means bigger and shorter epidemic</h2>
 
-<img data-src="figs/williams%20cumulative%20hazard.png" class="r-stretch"><p>(a) and (b) suggest increasing hazards may be appropriate. (c) suggests lack of treatment effect on progression -&gt; death transition</p>
-</section>
-<section id="conclusions-so-far" class="slide level2">
-<h2>Conclusions so far</h2>
-<ul>
-<li><p>No severe violation of proportional hazard assumption, so we should consider proportional hazard models</p></li>
-<li><p>Next step:</p>
-<ul>
-<li>Build a Cox Markov state-arrival extended model for progression → death transition</li>
-</ul></li>
-</ul>
-</section>
-<section id="cox-markov-state-arrival-extended-model-on-progression-death" class="slide level2">
-<h2>Cox Markov State-Arrival Extended Model on progression → death</h2>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th>Covariate</th>
-<th>HR (95% CI)</th>
-<th>P value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Treatment</td>
-<td>1.555 (0.874, 2.7666)</td>
-<td>0.133</td>
-</tr>
-<tr class="even">
-<td>Time spent progression free</td>
-<td>0.413 (0.215, 0.794)</td>
-<td>0.008</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><p>Time progression-free impacts progression → death transition</p></li>
-<li><p>Markov property doesn’t hold; semi-Markov model needed.</p></li>
-</ul>
-</section>
-<section id="steps-1" class="slide level2">
-<h2>Steps</h2>
-
-<img data-src="figs/williams_process_overview.png" class="r-stretch"></section>
-<section id="building-semi-markov-models" class="slide level2">
-<h2>Building semi-Markov models</h2>
+<img data-src="figs/R0_comparison.png" class="r-stretch"></section>
+<section id="difference-equations-a-discrete-approximation" class="slide level2">
+<h2>Difference equations: a discrete approximation</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><p>Estimate progression→death first (no competing risk)</p></li>
-<li><p>Fit multiple time-to-event distributions</p></li>
-<li><p>Include time spent progression-free as covariate</p></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><img data-src="figs/williams_model_diagram.png"></p>
+<div class="column" style="width:60%;">
+<p><span class="math display">\[
+\begin{aligned}
+&amp;S(t+m) = S(t) + \int_t^m -\beta S I dt\\
+&amp;I(t+m) = I(t) + \int_t^m (\beta S I - \mu I)dt\\
+&amp;R(t+m) = R(t) + \int_t^m \mu I dt
+\end{aligned}
+\]</span></p>
+</div><div class="column" style="width:40%;">
+<p><span class="math display">\[
+\begin{aligned}
+&amp;S_t = S_{t-1} -\beta^* S_{t-1} I_{t_1}\\
+\\
+&amp;I_t = I_{t-1} + \beta^* S_{t-1} I_{t-1} - \mu^* I_{t-1}\\
+\\
+&amp;R_t = R_{t-1} + \mu^* I_{t-1}
+\end{aligned}
+\]</span></p>
 </div></div>
+<p><span class="math inline">\(\beta^*\)</span> and <span class="math inline">\(\mu^*\)</span> are discrete analogs for <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\mu\)</span> and their value depends on the cycle length.</p>
 </section>
-<section id="model-for-progression-death" class="slide level2">
-<h2>Model for progression → death</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><img data-src="figs/progression_to_death_2yr.png"></p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="figs/progression_to_death_15yr.png"></p>
-</div></div>
-</section>
-<section id="model-for-progression-death-1" class="slide level2">
-<h2>Model for progression → death</h2>
+<section id="open-cohorts-models" class="slide level2">
+<h2>Open cohorts models</h2>
 <ul>
-<li><p>Log-logistic minimized AIC (fit to KM curve the best), but all were similar</p></li>
-<li><p>Other distributions 15-year extrapolation seemed more ‘reasonable’ (more compatible with expert opinion on how many patients are expected to survive 15 years post-progression). Therefore, Gompertz distribution selected.</p></li>
+<li><p>While (Semi)Markov models usually closed, differential eqn models can be open</p></li>
+<li><p>People enter (born, age in, get condition) and leave (die, age out)</p></li>
+<li><p>Cohort size not conserved for open cohorts</p></li>
 </ul>
-</section>
-<section id="selecting-model-for-other-transitions" class="slide level2">
-<h2>Selecting model for other transitions</h2>
 
-<img data-src="figs/williams_extrapolation_other_transitions.png" class="r-stretch"></section>
-<section id="steps-2" class="slide level2">
-<h2>Steps</h2>
-
-<img data-src="figs/williams_process_overview.png" class="r-stretch"></section>
-<section id="life-years-costs-qalys" class="slide level2">
-<h2>Life years, costs, QALYs</h2>
-<p>Used data from the trial for mean cost/QALYs of progression-free &amp; progressed under each intervention.</p>
-
-<img data-src="figs/williams_costs.png" class="r-stretch"></section>
-<section id="base-case-results" class="slide level2">
-<h2>Base case results</h2>
-
-<img data-src="figs/williams_base_case_results.png" class="r-stretch"></section>
-<section id="steps-3" class="slide level2">
-<h2>Steps</h2>
-
-<img data-src="figs/williams_process_overview.png" class="r-stretch"></section>
-<section id="scenario-analysis" class="slide level2">
-<h2>Scenario analysis</h2>
-
-<img data-src="figs/williams_scenarios.png" class="r-stretch"></section>
-<section id="probabilistic-sensitivity-analysis" class="slide level2">
-<h2>Probabilistic sensitivity analysis</h2>
-
-<img data-src="figs/williams_psa.png" class="r-stretch"></section>
-<section id="today-3" class="slide level2">
-<h2>Today</h2>
+<img data-src="figs/demographic_sir.png" class="r-stretch"></section>
+<section id="age-structuring" class="slide level2">
+<h2>Age-structuring</h2>
 <ul>
-<li>Using data-driven models in decision analysis
-<ul>
-<li>Multi-state modeling survival analysis</li>
-<li><strong>Machine learning example</strong></li>
-</ul></li>
+<li><p>In (Semi-)Markov models, usually build separate models to capture age cohorts</p></li>
+<li><p>For differential eqn model, may need to put age groups in same model for proper transition dynamics</p></li>
 </ul>
-</section>
-<section id="switch-to-ppt-file" class="slide level2">
-<h2>Switch to ppt file</h2>
+
+<img data-src="figs/age_structured_SIR.png" class="r-stretch"></section>
+<section id="recap" class="slide level2">
+<h2>Recap</h2>
+<ul>
+<li><p>If transitions or rewards are time-varying, can create 3D arrays and select “slice” for each cycle in a loop</p></li>
+<li><p>Cycle tree method corrects discrete time error using a modified transition reward matrix</p></li>
+<li><p>Epidemiological measures can be calculated from a cohort model</p></li>
+<li><p>Differential (difference) equation models useful when distribution of population across states influences transitions (e.g., infectious diseases)</p></li>
+</ul>
 </section>
 <section id="logistics" class="slide level2">
 <h2>Logistics</h2>
 <ul>
-<li><p>Assignment 4 (sensitivity analysis) due Fri, Oct 25</p></li>
-<li><p>Project proposal due Fri, Nov 1</p>
-<ul>
-<li>I suggest discussing your idea with me before proposal deadline</li>
-</ul></li>
-<li><p>Presentation of open-source modelling paper in class on Tues, Nov 5</p></li>
-<li><p>Office hours on Zoom today (same link)</p></li>
+<li>Assignment 1 (cost-effectiveness, decision trees) due Friday 9/13</li>
+<li>Assignment 2 CSTM; due Wednesday 9/25</li>
+<li>Next class: workflow for reproducible research</li>
+<li>Office hours 1:30 - 2:20pm, room #1103</li>
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
@@ -649,19 +595,19 @@ Alton Russell
   </div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="deq_models_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="stats_ML_decision_modeling_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="deq_models_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>
@@ -855,6 +801,44 @@ Alton Russell
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {
