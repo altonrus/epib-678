@@ -2,7 +2,7 @@
 title: "Stats/ML methods and decision modelling"
 subtitle: "EPIB  678 session 12, McGill University"
 author: "Alton Russell"
-date: "12 Feb 2025"
+date: "12 Feb 2026"
 format: revealjs
 editor: visual
 ---

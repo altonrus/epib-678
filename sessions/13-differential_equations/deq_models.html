@@ -12,7 +12,7 @@
 
   <meta name="author" content="Alton Russell">
   <meta name="dcterms.date" content="2026-02-12">
-  <title>Differential equations modells</title>
+  <title>Differential equations (DEQ) models</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -392,7 +392,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Differential equations modells</h1>
+  <h1 class="title">Differential equations (DEQ) models</h1>
   <p class="subtitle">EPIB 676 session 12, McGill University</p>
 
 <div class="quarto-title-authors">
@@ -409,85 +409,99 @@ Alton Russell
 <h2>Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-2"><a href=""></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co">#set ggplot theme</span></span>
-<span id="cb1-3"><a href=""></a><span class="co">#use install.packages("Package") for any you don't have already</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href=""></a><span class="fu">library</span>(deSolve) <span class="co"># for solving ODEs</span></span>
+<span id="cb1-3"><a href=""></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co">#set ggplot theme</span></span>
+<span id="cb1-4"><a href=""></a><span class="co">#use install.packages("Package") for any you don't have already</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="today" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li><u><strong>Probabilistic sensitivity analysis (Cont.)</strong></u></li>
+<li><u><strong>Machine learning decision model example (Cont.)</strong></u></li>
 <li>Intro to Differential equations</li>
 <li>Compartmental infectious disease models</li>
 <li>System dynamics models</li>
+<li>Choice of model type</li>
 </ul>
-</section>
-<section id="continuing-material-on-psa" class="slide level2">
-<h2>Continuing material on PSA</h2>
-<p><a href="https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/11-uncertainty_analysis/uncertainty_analysis.html#/cost-effectiveness-acceptability-curve-1" class="uri">https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/11-uncertainty_analysis/uncertainty_analysis.html#/cost-effectiveness-acceptability-curve-1</a></p>
 </section>
 <section id="today-1" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li>Probabilistic sensitivity analysis (Cont.)</li>
 <li><u><strong>Intro to Differential equations</strong></u></li>
 <li>Compartmental infectious disease models</li>
 <li>System dynamics models</li>
+<li>Choice of model type</li>
 </ul>
 </section>
-<section id="differential-equation-models" class="slide level2">
-<h2>Differential equation models</h2>
-<p>Used to model dynamic systems in physics, engineering, biology, ecology, and epidemiology</p>
-<p>Describe system changes over time using equations that relate rates of change to current state of system</p>
-</section>
-<section id="types-of-differential-equations" class="slide level2">
-<h2>Types of differential equations</h2>
+<section id="differential-equation-deq-models" class="slide level2">
+<h2>Differential equation (DEQ) models</h2>
 <ul>
-<li><p>Ordinary differential equations (ODEs): involve functions of one variable and their derivatives</p></li>
-<li><p>Partial differential equations (PDEs): involve functions of multiple variables and their partial derivatives</p></li>
-</ul>
-</section>
-<section id="diffeq-models-in-health-decision-analysis" class="slide level2">
-<h2>DiffEq models in health decision analysis</h2>
+<li><p>Used to model dynamic systems in physics, engineering, biology, ecology, epidemiology…</p></li>
+<li><p>Describe system changes over time using equations that relate rates of change to current state of system</p>
 <ul>
-<li><p>Common approach to <u><strong>continuous time cohort</strong></u> modeling</p></li>
-<li><p>Transitions depend on how cohort distributed across states (compartments)</p></li>
-<li><p>Useful for modeling epidemics</p></li>
-<li><p>Often approximated with difference equations</p></li>
+<li>Rate of change = derivative</li>
+</ul></li>
+<li><p>Solved by integrating over time (exact solution) or using numerical methods (approximate solution)</p></li>
 </ul>
 </section>
-<section id="differential-equation-models-1" class="slide level2">
-<h2>Differential equation models</h2>
-<p>Similarities to discrete time CSTMs</p>
+<section id="types-of-deqs" class="slide level2">
+<h2>Types of DEQs</h2>
+<ul>
+<li><p><u>Ordinary differential equation (<strong>ODE</strong>):</u> function of one variable and its derivative</p></li>
+<li><p><u>System of differential equations:</u> functions of &gt;1 variable and their derivatives</p></li>
+<li><p><u>Partial differential equations (<strong>PDEs</strong>)</u>: functions variables and their partial derivatives</p></li>
+<li><p><u>Delay differential equations (<strong>DDEs</strong>)</u>: include time delays</p></li>
+<li><p><u>Stochastic differential equations (<strong>SDEs</strong>):</u> include random components to model uncertainty</p>
+<ul>
+<li>Or, use deterministic DEQs + PSA for uncertainty</li>
+</ul></li>
+</ul>
+</section>
+<section id="deqs-in-health-decision-analysis" class="slide level2">
+<h2>DEQs in health decision analysis</h2>
+<ul>
+<li><p>Typically used for <strong>continuous time cohort modeling</strong></p>
+<ul>
+<li><p><strong>Variables:</strong> health states (compartments)</p></li>
+<li><p><strong>Derivatives:</strong> transition rates</p></li>
+</ul></li>
+<li><p>Transitions depend on how cohort distributed across compartments</p></li>
+<li><p>Common for modeling epidemics</p>
+<ul>
+<li>Rate of new infections proportional to number of infectious &amp; susceptible people</li>
+</ul></li>
+<li><p>Sometimes approximated with difference equations</p></li>
+</ul>
+</section>
+<section id="deq-vs.-discrete-time-cstm" class="slide level2">
+<h2>DEQ vs.&nbsp;discrete time CSTM</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Similarities</strong></p>
 <ul>
 <li><p>Individual in one state (compartment) at a time</p></li>
 <li><p>Individuals in state treated identically</p></li>
 <li><p>Transition between states over time</p></li>
 </ul>
-<p>Differences from discrete time CSTMs</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Differences</strong></p>
 <ul>
-<li><p>Continuous time (unless using difference eqn approximation)</p></li>
+<li><p>Continuous time</p></li>
 <li><p>Transition can depend on</p>
 <ul>
-<li><p>Time</p></li>
-<li><p>Current status of other compartments</p></li>
+<li><p>Current status (or rate of change) of other compartments</p></li>
 <li><p>Other factors</p></li>
 </ul></li>
 </ul>
-</section>
-<section id="differential-equation-basics" class="slide level2">
-<h2>Differential equation basics</h2>
-<ul>
-<li></li>
-</ul>
+</div></div>
 </section>
 <section id="today-2" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li>Probabilistic sensitivity analysis (Cont.)</li>
 <li>Intro to Differential equations</li>
 <li><u><strong>Compartmental infectious disease models</strong></u></li>
 <li>System dynamics models</li>
+<li>Choice of model type</li>
 </ul>
 </section>
 <section id="sir-model" class="slide level2">
@@ -549,7 +563,7 @@ Alton Russell
 \end{aligned}
 \]</span></p>
 </div></div>
-<p><span class="math inline">\(\beta^*\)</span> and <span class="math inline">\(\mu^*\)</span> are discrete analogs for <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\mu\)</span> and their value depends on the cycle length.</p>
+<p><span class="math inline">\(\beta^*\)</span> and <span class="math inline">\(\mu^*\)</span> are discrete analogs for <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\mu\)</span>. Values depends on the cycle length.</p>
 </section>
 <section id="open-cohorts-models" class="slide level2">
 <h2>Open cohorts models</h2>
@@ -568,22 +582,290 @@ Alton Russell
 </ul>
 
 <img data-src="figs/age_structured_SIR.png" class="r-stretch"></section>
+<section id="sir-model-in-r" class="slide level2">
+<h2>SIR model in R</h2>
+<p>Paper: <a href="https://doi.org/10.1038/s41592-020-0822-z">Bjørnstad et. al.&nbsp;Nature Medicine 2020</a></p>
+<p>Shiny app: <a href="https://shiny.bcgsc.ca/posepi1/" class="uri">https://shiny.bcgsc.ca/posepi1/</a></p>
+<p>Code on github: <a href="https://github.com/martinkrz/posepi1" class="uri">https://github.com/martinkrz/posepi1</a></p>
+</section>
+<section id="ode-function-in-r-package-desolve" class="slide level2">
+<h2>ode() function in R package deSolve</h2>
+<p>Load <code>library(deSolve)</code> and type <code>?ode()</code> to view help file</p>
+</section>
+<section id="system-of-equations-in-r" class="slide level2">
+<h2>System of equations in R</h2>
+<p><a href="https://github.com/martinkrz/posepi1/blob/master/R/models.R" class="uri">https://github.com/martinkrz/posepi1/blob/master/R/models.R</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="co"># sir_system() specifies system of eqns to solve within ode() function</span></span>
+<span id="cb2-2"><a href=""></a><span class="co">#    t: time sequence vector (first entry must be initial time)</span></span>
+<span id="cb2-3"><a href=""></a><span class="co">#    y: initial state of (S, I, R)</span></span>
+<span id="cb2-4"><a href=""></a><span class="co">#    parms: named list of parameters (beta, mu, gamma, N)</span></span>
+<span id="cb2-5"><a href=""></a>sir_system<span class="ot">=</span><span class="cf">function</span>(t, y, parms){</span>
+<span id="cb2-6"><a href=""></a>  S <span class="ot">=</span> x[<span class="dv">1</span>]</span>
+<span id="cb2-7"><a href=""></a>  I <span class="ot">=</span> x[<span class="dv">2</span>]</span>
+<span id="cb2-8"><a href=""></a>  R <span class="ot">=</span> x[<span class="dv">3</span>]</span>
+<span id="cb2-9"><a href=""></a>  beta  <span class="ot">=</span> parms[<span class="st">"beta"</span>]</span>
+<span id="cb2-10"><a href=""></a>  mu    <span class="ot">=</span> parms[<span class="st">"mu"</span>]</span>
+<span id="cb2-11"><a href=""></a>  gamma <span class="ot">=</span> parms[<span class="st">"gamma"</span>]</span>
+<span id="cb2-12"><a href=""></a>  N     <span class="ot">=</span> parms[<span class="st">"N"</span>]</span>
+<span id="cb2-13"><a href=""></a>  dS  <span class="ot">=</span> mu<span class="sc">*</span>(N<span class="sc">-</span>S)  <span class="sc">-</span> beta<span class="sc">*</span>S<span class="sc">*</span>I<span class="sc">/</span>N</span>
+<span id="cb2-14"><a href=""></a>  dI  <span class="ot">=</span> beta<span class="sc">*</span>S<span class="sc">*</span>I<span class="sc">/</span>N <span class="sc">-</span> I<span class="sc">*</span>(mu <span class="sc">+</span> gamma)</span>
+<span id="cb2-15"><a href=""></a>  dR  <span class="ot">=</span> gamma<span class="sc">*</span>I <span class="sc">-</span> mu<span class="sc">*</span>R</span>
+<span id="cb2-16"><a href=""></a>  res <span class="ot">=</span> <span class="fu">c</span>(dS,dI,dR)</span>
+<span id="cb2-17"><a href=""></a>  <span class="fu">list</span>(res)</span>
+<span id="cb2-18"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calling-system-of-equations" class="slide level2">
+<h2>Calling system of equations</h2>
+<p><a href="https://github.com/martinkrz/posepi1/blob/master/R/models.R" class="uri">https://github.com/martinkrz/posepi1/blob/master/R/models.R</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># sir() is a wrapper function for ode() that specifies time sequence, </span></span>
+<span id="cb3-2"><a href=""></a><span class="co">#.    initial conditions, and parameters</span></span>
+<span id="cb3-3"><a href=""></a>sir <span class="ot">=</span> <span class="cf">function</span>(<span class="at">beta=</span><span class="dv">3</span>, <span class="at">gamma=</span><span class="dv">2</span>, <span class="at">vac=</span><span class="dv">0</span>, <span class="at">tmax=</span><span class="dv">20</span>, <span class="at">step=</span>sir_system_time_step) {</span>
+<span id="cb3-4"><a href=""></a>  time  <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, tmax, <span class="at">by=</span>step)</span>
+<span id="cb3-5"><a href=""></a>  parms <span class="ot">=</span> <span class="fu">c</span>(<span class="at">mu=</span><span class="dv">0</span>, <span class="at">N=</span><span class="dv">1</span>, <span class="at">beta=</span>beta, <span class="at">gamma=</span>gamma)</span>
+<span id="cb3-6"><a href=""></a>  start <span class="ot">=</span> <span class="fu">c</span>(<span class="at">S=</span><span class="dv">1</span><span class="sc">-</span>sir_init_i<span class="sc">-</span>vac, <span class="at">I=</span>sir_init_i, <span class="at">R=</span><span class="dv">0</span>)</span>
+<span id="cb3-7"><a href=""></a>  out   <span class="ot">=</span> <span class="fu">ode</span>(<span class="at">y     =</span> start, </span>
+<span id="cb3-8"><a href=""></a>              <span class="at">times =</span> time, </span>
+<span id="cb3-9"><a href=""></a>              <span class="at">func  =</span> sir_system, </span>
+<span id="cb3-10"><a href=""></a>              <span class="at">parms =</span> parms)</span>
+<span id="cb3-11"><a href=""></a>  out   <span class="ot">=</span> <span class="fu">cbind</span>(out,<span class="fu">data.frame</span>(<span class="at">R0=</span>beta<span class="sc">/</span>gamma,<span class="at">vac=</span>vac))</span>
+<span id="cb3-12"><a href=""></a>  <span class="fu">return</span>(<span class="fu">as.data.frame</span>(out))</span>
+<span id="cb3-13"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rewards-and-deq-models" class="slide level2">
+<h2>“Rewards” and DEQ models</h2>
+<ul>
+<li><p>Costs, QALYs calculated by integrating over time</p></li>
+<li><p>Ex: if cost per unit time infectious = <span class="math inline">\(c_I\)</span>, then total cost while infecitous is: <span class="math display">\[
+\int_0^T c I(t) dt
+\]</span></p></li>
+</ul>
+</section>
+<section id="deq-resources" class="slide level2">
+<h2>DEQ resources</h2>
+<ul>
+<li><a href="https://jmzobitz.github.io/ModelingWithR/">“Exploring Modeling with Data and Differential Equations Using R” by John Zobits</a></li>
+</ul>
+</section>
+<section id="today-3" class="slide level2">
+<h2>Today</h2>
+<ul>
+<li>Intro to Differential equations</li>
+<li>Compartmental infectious disease models</li>
+<li><u><strong>System dynamics models</strong></u></li>
+<li>Choice of model type</li>
+</ul>
+</section>
+<section id="credit" class="slide level2">
+<h2>Credit</h2>
+<p>Much of this section based on</p>
+<ul>
+<li><a href="https://link-springer-com.proxy3.library.mcgill.ca/book/10.1007/978-3-319-34043-2">System Dynamics Modeling with R</a> (2016) by Jim Duggan</li>
+</ul>
+</section>
+<section id="system-dynamics-philosophy" class="slide level2">
+<h2>System dynamics philosophy</h2>
+<p>Actions can have consequences through complex, non-linear <u><strong>feedback loops</strong></u></p>
+
+<img data-src="figs/SD-domino-guy.png" class="r-stretch"></section>
+<section id="stocks-and-flows" class="slide level2">
+<h2>Stocks and flows</h2>
+<ul>
+<li><p>Stocks = compartment/state</p></li>
+<li><p>Flows = transitions</p></li>
+<li><p>Analogy: faucet, bathtub, drain</p></li>
+</ul>
+
+<img data-src="figs/SD_disease_stock_flow.png" class="r-stretch"></section>
+<section id="more-stocks-and-flows" class="slide level2">
+<h2>More stocks and flows</h2>
+
+<img data-src="figs/SD-stock-flows-more.png" class="r-stretch"></section>
+<section id="feedback-loops" class="slide level2">
+<h2>Feedback loops</h2>
+<blockquote>
+<p>A closed chain of causal connections from a stock—through a set of decisions, rules, physical laws, or actions—that are dependent on the level of the stock, and back again through a flow to change the stock -Meadows (2008)</p>
+</blockquote>
+<ul>
+<li><p>Feedback loops distinguish SD models from typical DEQ</p></li>
+<li><p>Two types of feedback loops:</p>
+<ul>
+<li><p><strong>Balancing:</strong> negtaive feedback, “goal-seeking”</p></li>
+<li><p><strong>Reinforcing:</strong> positive feedback, “run-away”</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="heating-a-room-balancing-loop-negative-feedback" class="slide level2">
+<h2>Heating a room: balancing loop (negative feedback)</h2>
+
+<img data-src="figs/SD_feedback_room_heat.png" class="r-stretch"></section>
+<section id="capital-investment-reinforcing-loop-positive-feedback" class="slide level2">
+<h2>Capital investment: reinforcing loop (positive feedback)</h2>
+
+<img data-src="figs/SD_feedback_capital_growth.png" class="r-stretch"></section>
+<section id="ex-opioid-misuse-and-use-disorder" class="slide level2">
+<h2>Ex: Opioid misuse and use disorder</h2>
+
+<img data-src="figs/SD-opioid-schematic.svg" class="r-stretch"></section>
+<section id="feedback-loops-in-opioid-example" class="slide level2">
+<h2>Feedback loops in opioid example</h2>
+
+<img data-src="figs/SD-opioid-feedbacks.png" class="r-stretch"><p><a href="https://pubmed.ncbi.nlm.nih.gov/35749492/">Stringfellow et. al.&nbsp;2022</a></p>
+<p><a href="www.doi.org/10.1073/pnas.2115714119">Lim et. al.&nbsp;2022</a></p>
+</section>
+<section id="resources-for-sd-modeling" class="slide level2">
+<h2>Resources for SD modeling</h2>
+<ul>
+<li><p><a href="https://doi.org/10.1146/annurev-publhealth-040617-014317">Tracy et. al.&nbsp;2018. “ABM in Public Health” Annual Review of Public Health</a></p></li>
+<li><p><a href="https://rpubs.com/rsmard05/sysDynR">SD in R intro</a>, Cpt. Rick Mard</p></li>
+<li><p><a href="https://link-springer-com.proxy3.library.mcgill.ca/book/10.1007/978-3-319-34043-2">System Dynamics Modeling with R</a> by Jim Duggan</p></li>
+<li><p><a href="https://vensim.com/free-download/">Vensim software</a></p></li>
+</ul>
+</section>
+<section id="limitations-of-sir-type-deq-models" class="slide level2">
+<h2>Limitations of SIR-type DEQ models</h2>
+<ul>
+<li><p>Assume homogeneous mixing of population</p></li>
+<li><p>Cannot capture individual-level heterogeneity</p></li>
+<li><p>Cannot capture history-dependence (e.g., waning immunity)</p>
+<ul>
+<li>Can approximate with more compartments</li>
+</ul></li>
+</ul>
+</section>
+<section id="today-4" class="slide level2">
+<h2>Today</h2>
+<ul>
+<li>Intro to Differential equations</li>
+<li>Compartmental infectious disease models</li>
+<li>System dynamics models</li>
+<li><u><strong>Choice of model type</strong></u></li>
+</ul>
+</section>
+<section id="choosing-a-model-type" class="slide level2">
+<h2>Choosing a model type</h2>
+<ul>
+<li><p><u><strong>Goal:</strong></u> capture relevant differences between strategies</p></li>
+<li><p>“As complex as needed, as simple as possible.”</p></li>
+<li><p>Trade-offs</p>
+<ul>
+<li><p>Computational demand</p></li>
+<li><p>Analyzable outputs</p></li>
+<li><p>Types of error</p></li>
+<li><p>Transparency and interpretability</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="computational-demand" class="slide level2">
+<h2>Computational demand</h2>
+<ul>
+<li><p>Rarely a limiting factor for cohort models</p>
+<ul>
+<li>Discrete time CSTM, DEQ, decision trees</li>
+</ul></li>
+<li><p>Often a challenge for individual simulations</p>
+<ul>
+<li><p>DES more efficient than individual state-transition microsimulation when most individuals do not transition most cycles</p></li>
+<li><p>Agent-based models usually the most demanding</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="error-in-decision-modelling" class="slide level2">
+<h2>Error in decision modelling</h2>
+<ul>
+<li><p><u><strong>Estimation error:</strong></u> differences in quantity of interest between model output &amp; real event generating process</p></li>
+<li><p><u><strong>Decision error:</strong></u> making the wrong recommendation/decision based on model output</p></li>
+</ul>
+<p>Poor estimation does not necessarily lead to the wrong decision</p>
+</section>
+<section id="taxonomy-of-errors" class="slide level2">
+<h2>Taxonomy of errors</h2>
+
+<img data-src="figs/Graves_ErrorTaxonomy_1.png" class="r-stretch"></section>
+<section id="taxonomy-of-errors-1" class="slide level2">
+<h2>Taxonomy of errors</h2>
+
+<img data-src="figs/Graves_ErrorTaxonomy_2.png" class="r-stretch"></section>
+<section id="recall-embedding-error" class="slide level2">
+<h2>Recall: Embedding error</h2>
+<ul>
+<li><p>Misalignment between transition probabilities and underlying continuous-time process</p></li>
+<li><p>Occurs when:</p>
+<ul>
+<li><p>literature-based parameters are transformed and embedded using common rate-to-prob formala <span class="math inline">\(P = 1 - e^{-rt}\)</span></p></li>
+<li><p>Competing events (transitions to &gt;1 state possible)</p></li>
+</ul></li>
+</ul>
+<p>Standard rate-to-prob ignores possiblity of two transitions in same cycle</p>
+</section>
+<section id="discrete-time-embedding-error-example" class="slide level2">
+<h2>Discrete time embedding error example</h2>
+<ul>
+<li><p><span class="math inline">\(A\)</span>: untreated, <span class="math inline">\(B\)</span>: on therapy, <span class="math inline">\(C\)</span>: side effect from therapy</p></li>
+<li><p><strong>In continuous time:</strong> <span class="math inline">\(A \rightarrow B \rightarrow C\)</span> not possible</p></li>
+<li><p><strong>In a discrete time model:</strong> if <span class="math inline">\(A \rightarrow B \rightarrow C\)</span> can happen faster than your cycle length, individuals should be able to start a cycle in <span class="math inline">\(A\)</span> and end and <span class="math inline">\(C\)</span></p></li>
+</ul>
+</section>
+<section id="solutions-to-embedding-error" class="slide level2">
+<h2>Solutions to embedding error</h2>
+<ul>
+<li><p>Model process in continuous time</p>
+<ul>
+<li>DEQ or Discrete event simulation</li>
+</ul></li>
+<li><p>Specify a transition matrix consistent with a generator matrix of unverlying intensities (rates)</p>
+<ul>
+<li><p>Easier if transitions first estimated as rates in a transition intensity matrix</p></li>
+<li><p>See <a href="https://doi.org/10.1177/0272989X21995805">Graves et. al.&nbsp;2021 supplement</a> for details</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="jensens-inequality" class="slide level2">
+<h2>Jensen’s inequality</h2>
+<p>For a function <span class="math inline">\(f()\)</span> and random variable <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[
+E[f(X)] \neq f(E[X])
+\]</span></p>
+<p><img data-src="figs/jensen_inequality.jpg"> Source: <a href="https://medium.com/@k.shantipriya27/jensens-inequality-unveiling-its-power-in-data-science-and-machine-learning-ecf75cadf10f">K Shanti Priya on Medium</a></p>
+</section>
+<section id="implications-for-modelling-choice" class="slide level2">
+<h2>Implications for modelling choice</h2>
+<p>For a model <span class="math inline">\(f()\)</span>, individual parameters <span class="math inline">\(X\)</span>, and model output <span class="math inline">\(Y\)</span>:</p>
+<p><span class="math display">\[
+f(E[X]) \neq E[f(X)]
+\]</span></p>
+<ul>
+<li><p>Cohort model cannot perfectly estimate population mean outcomes <span class="math inline">\(E[Y]\)</span>, even if population mean parameters <span class="math inline">\(E[X]\)</span> are precisely known</p></li>
+<li><p>Absolute precision in <span class="math inline">\(E[Y]\)</span> only possible when distribution of parameters between individuals is modelled</p></li>
+</ul>
+</section>
+<section id="choosing-a-model-type-1" class="slide level2">
+<h2>Choosing a model type</h2>
+
+<img data-src="figs/model_categorization.png" class="r-stretch"></section>
 <section id="recap" class="slide level2">
 <h2>Recap</h2>
 <ul>
-<li><p>If transitions or rewards are time-varying, can create 3D arrays and select “slice” for each cycle in a loop</p></li>
-<li><p>Cycle tree method corrects discrete time error using a modified transition reward matrix</p></li>
-<li><p>Epidemiological measures can be calculated from a cohort model</p></li>
 <li><p>Differential (difference) equation models useful when distribution of population across states influences transitions (e.g., infectious diseases)</p></li>
+<li><p>System dynamics models useful for modeling feedback loops and complex systems</p></li>
+<li><p>Choice of model type depends on trade-offs between computational demand, analyzable outputs, types of error, and transparency/interpretability</p></li>
 </ul>
 </section>
 <section id="logistics" class="slide level2">
 <h2>Logistics</h2>
 <ul>
-<li>Assignment 1 (cost-effectiveness, decision trees) due Friday 9/13</li>
-<li>Assignment 2 CSTM; due Wednesday 9/25</li>
-<li>Next class: workflow for reproducible research</li>
-<li>Office hours 1:30 - 2:20pm, room #1103</li>
+<li><p>Complete reading before next class</p></li>
+<li><p><strong>Project proposal</strong> due Fri, Feb 27</p></li>
+<li><p><strong>Assignment 4</strong></p>
+<ul>
+<li><p>Will be posted by Fri, Feb 20</p></li>
+<li><p>Due Wed, Mar 11</p></li>
+</ul></li>
+<li><p><strong>Open source model presentations</strong> in class on Thurs, March 12</p></li>
+<li><p><strong>Office hours</strong> on Mondays 2:30pm to 3:30pm, room 1128</p></li>
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
