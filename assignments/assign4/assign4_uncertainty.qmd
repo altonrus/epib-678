@@ -1,5 +1,5 @@
 ---
-title: "Assignment 4: Uncertainty analysis"
+title: "Assignment 4: Differential equations and uncertainty analysis"
 author: "YOUR NAME HERE"
 date: today
 format:
@@ -19,10 +19,201 @@ library(ggplot2)
 library(dampack)
 library(tibble)
 library(dplyr)
+library(deSolve)
 theme_set(theme_bw()) #Makes ggplots look better
 ```
 
-# 1. Sensitivity analysis
+# 1. Differential equation model
+
+This section is based on the model of a hypothetical sexually transmitted disease (loosely based on HIV) from [Menzies et. al. 2017](https://doi.org/10.1007/s40273-017-0494-4), a tutorial on Bayesian model calibration. They provide [R code for their implementation of model](https://doi.org/10.7910/DVN/QXM09F). The model used for this worked example was based on approaches used to modeling HIV in high-burden settings (5).
+
+The model states and parameters for this model are defined in this figure:
+
+![](menzies_model.png)
+
+The differential equations defining this model are:
+
+\$\$
+
+\begin{aligned}
+
+\frac{dN}{dt} &= ab - \mu^{B} N & \text{non-susceptible} \\
+\frac{dS}{dt} &= a(1-b) - \mu^{B} S - \lambda_tS & \text{susceptible} \\
+\frac{dE}{dt} &= \lambda_tS - (\mu^{B} + \mu^{E}) E - r_t^E E - cE & \text{early disease} \\
+\frac{dL}{dt} &= cE - (\mu^{B} + \mu^{L}) L - r^L L & \text{late disease} \\
+\frac{dT}{dt} &= r_t^E E + r^L L - (\mu^{B} + \mu^{T}) T & \text{on treatment} \\
+\frac{dD}{dt} &= \mu^{B} (N+S+E+L+T) + \mu^{E} E + \mu^{L} L + \mu^{T} T & \text{dead}
+\end{aligned}
+
+\$\$
+
+The force of infection $\lambda_t$ is defined as $\lambda_t = \rho \frac{E+L}{S+E+L+T}$, where $\rho$ is the effective contact rate. The model simulation begins at time 0 (corresponding to 1990) until time 51 (corresponding to 2040). Years 0-30 (1990-2020) are used to simulate the epidemic up until the present day, and years 30-51 (2020-2040) are used to project future outcomes for a policy comparison. The policy comparison is between two scenarios:
+
+-   **Base case:** only individuals with late-stage disease can innitiate treatment
+-   **Expanded treatment:** individuals with early-stage disease can also access treatment beginning in year 30.
+
+The rate of treatment update during early disease $r^E$ is set to 0 for the first 30 years in both scenarios. In the "expanded treatment access" scenario, $r^E$ is set to the same value as $r^L$ beginning in year 30.
+
+Menzies et. al. implementation (without using DeSolve)
+
+```{r}
+##############################################
+################### MODEL ####################
+##############################################
+# This function estimates outcomes describing epidemiology of a hypothetical disease
+# as well as outcomes (life-years, costs) for estimating cost-effectiveness of a policy 
+# to expand treatment access to individual's with early stage disease.
+
+mod <- function(par_vector) {
+  # par_vector: a vector of model parameters
+  # project_future: TRUE/FALSE, whether to project future outcomes for policy comparison
+  pop_size   <- 1e6             # population size hard-coded as 1 million
+  mu_b       <- 0.015           # background mortality rate hard-coded as 0.015
+  mu_e       <- par_vector[1]   # cause-specific mortality rate with early-stage disease
+  mu_l       <- par_vector[2]   # cause-specific mortality rate with late-stage disease
+  mu_t       <- par_vector[3]   # cause-specific mortality rate on treatment
+  p          <- par_vector[4]   # transtion rate from early to late-stage disease
+  r_l <- r_e <- par_vector[5]   # rate of uptake onto treatment (r_l = late-stage disease;r_e = early-stage disease)
+  rho        <- par_vector[6]   # effective contact rate 
+  b          <- par_vector[7]   # fraction of population in at-risk group
+  c          <- par_vector[8]   # annual cost of treatment  
+  
+  ######## Prepare to run model ###################
+  n_yrs    <- 51   # no. years to simulate (30 to present, 51 for 20 year analytic horizon)
+  sim      <- 1:2  # which scenarios to simulate: 1 = base case, 2 = expanded treatment access
+  v_mu     <- c(0,0,mu_e,mu_l,mu_t)+mu_b             # vector of mortality rates
+  births   <- pop_size*mu_b*c(1-b,b)                 # calculate birth rate for equilibrium population before epidemic
+  init_pop <- pop_size*c(1-b,b-0.001,0.001,0,0,0)    # creates starting vector for population
+  trace    <- matrix(NA,12*n_yrs+1,6)                  # creates a table to store simulation trace
+  colnames(trace) <- c("N","S","E","L","T","D")
+  rownames(trace) <- seq(from=0, to=51, by=1/12)
+  results  <- list("base_case" = trace,
+                   "expanded_tx" = trace)
+  
+  ######## Run model ###################
+  for(s in sim) { # loop over two scenarios: 1 = base case, 2 = expanded treatment access
+    # reset population vector to initial population at start of simulation
+    #.   and fill in first row of trace matrix (cohort distribution across states
+    #.   at time 0)
+    results[[s]][1,] <- P0 <- P1 <- init_pop 
+    
+    # loop over months and update state distribution
+    for(m in 1:(12*n_yrs)) { 
+      # P0: population distribution at start of month
+      # P!: population distribution at end of month (after applying transitions)
+      
+      # calculate force of infection
+      lambda    <- rho*sum(P0[3:4])/sum(P0[2:5]) 
+      
+      # calculate transitions each month and update P1
+      #.  births: entries into N and S
+      P1[1:2]   <- P1[1:2]+births/12             
+      #.  deaths: N, S, E, L, T, to D
+      P1[-6]    <- P1[-6]-P0[-6]*v_mu/12         
+      P1[6]     <- P1[6]+sum(P0[-6]*v_mu/12)
+      #.  infections: S to E
+      P1[2]     <- P1[2]-P0[2]*lambda/12         
+      P1[3]     <- P1[3]+P0[2]*lambda/12
+      #.  disease progression: E to L
+      P1[3]     <- P1[3]-P0[3]*p/12
+      P1[4]     <- P1[4]+P0[3]*p/12
+      #.  treatment uptake: L to T
+      P1[4]     <- P1[4]-P0[4]*r_l/12
+      P1[5]     <- P1[5]+P0[4]*r_l/12
+      
+      if(s==2 & m>(12*30)) {
+        #.  treatment uptake: E to T (scenario 2)
+        P1[3]   <- P1[3]-P0[3]*r_e/12
+        P1[5]   <- P1[5]+P0[3]*r_e/12
+      }
+      results[[s]][m+1,] <- P0 <- P1                      # fill trace, reset pop vectors
+    }
+  }
+  
+  ######## Report results ###################
+  return(results)
+}
+
+# create vector that uses the mean value from the 
+#.  table above for each parameter
+par_vector <- c(0.05, #mu_E
+                0.25, #mu_L
+                0.025, #mu_t
+                0.10, #p
+                0.5, #r_L
+                0.5, #rho
+                0.20, #b
+                1000 #c
+)   
+
+# run the model on the mean parameter set 
+#. with project_future = T. Print inc_LY and inc_cost to console
+trace_model <- mod(par_vector)
+
+trace_base_case <- trace_model$base_case
+trace_expanded_tx <- trace_model$expanded_tx
+
+# Plot cohort trace
+
+# Merge trace plots, long format dataframe for ggplot
+t_trace_long <- rbind(
+  cbind(as.data.frame(trace_base_case),
+        year=as.numeric(rownames(trace_base_case)),
+        scenario="base case"),
+  cbind(as.data.frame(trace_expanded_tx),
+        year=as.numeric(rownames(trace_base_case)),
+        scenario="expanded tx")
+) |> 
+  pivot_longer(cols = c("N","S","E","L","T","D"), names_to = "state", values_to = "count")
+
+
+ggplot(data = t_trace_long) +
+  geom_line(aes(x=year, y=count, color=state))+
+  facet_wrap(~scenario)+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x="Year", y="Number of people", color="Health state")+
+  theme(legend.position = "bottom")+
+  geom_vline(xintercept = 30, linetype = "dashed", color = "grey")
+
+```
+
+
+
+```{r}
+deq_system = function(t,
+                      y,
+                      par_vector){
+  # Extract state variables from par_vector
+  
+  
+  # Define differential equations
+  dN_dt = NA
+  dS_dt = NA
+  dE_dt = NA
+  dL_dt = NA
+  dT_dt = NA
+  dD_dt = NA
+  
+  # Return list of derivatives
+  return(
+    list(dN_dt, dS_dt, dE_dt, dL_dt, dT_dt, dD_dt)
+  )
+}
+```
+
+
+```{r}
+# Test out the deq_system_base function by running it with the base-case parameters and plotting the results
+
+base_scenario <- ode(y = c(N=NA, S=NA, E=NA, L=NA, T=NA, D=NA), 
+                 times = seq(0, 51, by=1/12), 
+                 func = deq_system_base, 
+                 par_vector = par_vector)
+
+
+```
+
+# 2. Sensitivity analysis
 
 For this section, we will re-use the model of transfusion-transmitted HIV from problem set 2 and conduct probabilistic sensitivity analysis with it.
 

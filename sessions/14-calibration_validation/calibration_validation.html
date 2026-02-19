@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.5.47">
 
   <meta name="author" content="Alton Russell">
-  <meta name="dcterms.date" content="2024-10-10">
+  <meta name="dcterms.date" content="2026-02-19">
   <title>Calibration and validation</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -393,7 +393,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Calibration and validation</h1>
-  <p class="subtitle">EPIB 676 session 13, McGill University</p>
+  <p class="subtitle">EPIB 678 session 14, McGill University</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -403,7 +403,7 @@ Alton Russell
 </div>
 </div>
 
-  <p class="date">2024-10-10</p>
+  <p class="date">2026-02-19</p>
 </section>
 <section id="r-packages" class="slide level2">
 <h2>R packages</h2>
@@ -421,7 +421,19 @@ Alton Russell
 <section id="today" class="slide level2">
 <h2>Today</h2>
 <ul>
-<li><p><strong>Model calibration</strong></p>
+<li><p>Wrapping up DEQ lecture</p></li>
+<li><p>Model calibration</p></li>
+<li><p>Model validation</p></li>
+</ul>
+</section>
+<section id="wrapping-up-deq-lecture" class="slide level2">
+<h2>Wrapping up DEQ lecture</h2>
+<p><a href="https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/13-differential_equations/deq_models.html#/feedback-loops-in-opioid-example" class="uri">https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/13-differential_equations/deq_models.html#/feedback-loops-in-opioid-example</a></p>
+</section>
+<section id="today-1" class="slide level2">
+<h2>Today</h2>
+<ul>
+<li><p><u><strong>Model calibration</strong></u></p>
 <ul>
 <li><p>Concept</p></li>
 <li><p>Deterministic methods</p></li>
@@ -487,6 +499,7 @@ Alton Russell
 <p><a href="https://doi.org/10.1177/0272989X18792283">Alarid-Escudero et. al.&nbsp;2018</a></p>
 </div><div class="column" style="width:35%;">
 <p>Calibrate <code>p.Mets</code> and <code>p.DieMets</code> by fitting to observed survival data</p>
+<p><strong>Abbreviations:</strong> Mets, metastasis; NED, no evidence of diseases</p>
 </div></div>
 </section>
 <section id="target-data" class="slide level2">
@@ -676,16 +689,16 @@ Alton Russell
 <li><p>For numerical stability, we compute <strong>log-likelihood</strong></p></li>
 </ul>
 </section>
-<section id="why-maximize-log-likelihood" class="slide level2">
-<h2>Why maximize log-likelihood?</h2>
-<p>Calibration identifies parameters that maximize <strong>t</strong>otal likelihood, <u>product of the likelihood</u> of each target</p>
+<section id="why-log-likelihood" class="slide level2">
+<h2>Why log-likelihood?</h2>
+<p>Calibration identifies parameters that maximize total likelihood, <u>the product of the likelihood</u> of each target</p>
 <p><span class="math display">\[
 A: \underset{\Theta}{\operatorname{argmax}} p(\textbf{x} \mid \Theta ) = \underset{\Theta}{\operatorname{argmax}} \prod_{i=1}^N p(x_i \mid \Theta)
 \]</span>Equivalent to maximizing the <u>sum of the log-likelihoods</u></p>
 <p><span class="math display">\[
 B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \underset{\Theta}{\operatorname{argmax}}\sum_{i=1}^N \ln p(x_i \mid \Theta)
 \]</span></p>
-<p>Floating point precision issues are less likely with B vs.&nbsp;A</p>
+<p>Floating point precision issues less likely with B than with A</p>
 </section>
 <section id="goodness-of-fit-function" class="slide level2">
 <h2>Goodness-of-fit function</h2>
@@ -714,7 +727,7 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <span id="cb13-5"><a href=""></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>rs.n.samp){</span>
 <span id="cb13-6"><a href=""></a>  <span class="co">#  Run model for a given parameter set</span></span>
 <span id="cb13-7"><a href=""></a>  model.res <span class="ot">=</span> <span class="fu">markov_crs</span>(<span class="at">v.params =</span> rs.param.samp[j, ])</span>
-<span id="cb13-8"><a href=""></a>    <span class="co"># Calculate goodness-of-fit of model outputs to targets </span></span>
+<span id="cb13-8"><a href=""></a>  <span class="co"># Calculate goodness-of-fit of model outputs to targets </span></span>
 <span id="cb13-9"><a href=""></a>  <span class="co"># (log likelihood of the model output given the targets)</span></span>
 <span id="cb13-10"><a href=""></a>  rs.loglike[j] <span class="ot">=</span> <span class="fu">gof_norm_loglike</span>(<span class="at">model_output =</span> model.res<span class="sc">$</span>Surv,</span>
 <span id="cb13-11"><a href=""></a>                               <span class="at">target_mean =</span> CRS.targets<span class="sc">$</span>Surv<span class="sc">$</span>value,</span>
@@ -754,20 +767,24 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <img data-src="calibration_validation_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
 <section id="alternative-goodness-of-fit-measures" class="slide level2">
 <h2>Alternative goodness-of-fit measures</h2>
-<p>Other likelihood functions</p>
 <ul>
-<li><p>Other distribution: Beta, Dirichlet, gamma, etc.</p></li>
-<li><p>Distribution-free: Weighted sum of square error</p></li>
+<li><p><strong>Other likelihood distributions:</strong> Beta, Dirichlet, gamma, etc.</p></li>
+<li><p><strong>Distribution-free:</strong> Absolute error, weighted sum of square error</p></li>
 </ul>
-<p>Can define for &gt;1 target</p>
+<p>Handling &gt;1 target</p>
 <ul>
 <li>Judge parameter set based on combined measure, e.g., weighted sum where more “important” targets given higher weights</li>
 </ul>
 </section>
 <section id="nelder-mead-calibration" class="slide level2">
 <h2>Nelder-Mead calibration</h2>
-<p>Whereas random search is undirected, Nelder-Mead is directed</p>
-<p>Sample several starting points with goal of finding global optimum</p>
+<ul>
+<li><p>Nelder-Mead is a directed search method for identifying a local minimum or maximum to a function</p>
+<ul>
+<li>Unlike random search which is undirected</li>
+</ul></li>
+<li><p>Sample several starting points with goal of finding global optimum</p></li>
+</ul>
 </section>
 <section id="local-and-global-optima" class="slide level2">
 <h2>Local and global optima</h2>
@@ -777,14 +794,16 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <section id="nm-calibration-sample-starting-values" class="slide level2">
 <h2>NM calibration: sample starting values</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>n.init <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb18-2"><a href=""></a>nm.params.init <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>n.init,<span class="at">ncol=</span>n.param)</span>
-<span id="cb18-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb18-4"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n.param){</span>
-<span id="cb18-5"><a href=""></a>  nm.params.init[,i] <span class="ot">&lt;-</span> <span class="fu">runif</span>(n.init,<span class="at">min=</span>lb[i],<span class="at">max=</span>ub[i])</span>
-<span id="cb18-6"><a href=""></a>}</span>
-<span id="cb18-7"><a href=""></a><span class="fu">colnames</span>(nm.params.init) <span class="ot">&lt;-</span> param.names</span>
-<span id="cb18-8"><a href=""></a><span class="fu">head</span>(nm.params.init, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>n.init <span class="ot">&lt;-</span> <span class="dv">100</span>; n.param <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb18-2"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb18-3"><a href=""></a>nm.params.init <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
+<span id="cb18-4"><a href=""></a>  <span class="fu">runif</span>(n.init, <span class="at">min =</span> lb[<span class="dv">1</span>], <span class="at">max =</span> ub[<span class="dv">1</span>]),</span>
+<span id="cb18-5"><a href=""></a>  <span class="fu">runif</span>(n.init, <span class="at">min =</span> lb[<span class="dv">2</span>], <span class="at">max =</span> ub[<span class="dv">2</span>])) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href=""></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb18-7"><a href=""></a></span>
+<span id="cb18-8"><a href=""></a><span class="fu">dimnames</span>(nm.params.init) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, param.names)</span>
+<span id="cb18-9"><a href=""></a></span>
+<span id="cb18-10"><a href=""></a><span class="fu">head</span>(nm.params.init, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         p.Mets  p.DieMets
 [1,] 0.08466381 0.05500232
@@ -798,18 +817,17 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 </section>
 <section id="nm-calibration-objective-function" class="slide level2">
 <h2>NM calibration: objective function</h2>
-<p>Same basic steps as random search, just put into a function</p>
+<p>Same basic steps as random search, just put into a function that we can call within the optimizer</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>nm_objective <span class="ot">=</span> <span class="cf">function</span>(v.params){</span>
 <span id="cb20-2"><a href=""></a>  <span class="do">###   Run model for parametr set "v.params"</span></span>
 <span id="cb20-3"><a href=""></a>  model.res <span class="ot">=</span> <span class="fu">markov_crs</span>(v.params)</span>
-<span id="cb20-4"><a href=""></a></span>
-<span id="cb20-5"><a href=""></a>  <span class="co"># log likelihood  </span></span>
-<span id="cb20-6"><a href=""></a>  v.GOF <span class="ot">=</span> <span class="fu">gof_norm_loglike</span>(<span class="at">target_mean =</span> CRS.targets<span class="sc">$</span>Surv<span class="sc">$</span>value,</span>
-<span id="cb20-7"><a href=""></a>                              <span class="at">model_output =</span> model.res<span class="sc">$</span>Surv,</span>
-<span id="cb20-8"><a href=""></a>                              <span class="at">target_sd =</span> CRS.targets<span class="sc">$</span>Surv<span class="sc">$</span>se)</span>
-<span id="cb20-9"><a href=""></a>  <span class="fu">return</span>(v.GOF)</span>
-<span id="cb20-10"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-4"><a href=""></a>  <span class="co"># log likelihood  </span></span>
+<span id="cb20-5"><a href=""></a>  v.GOF <span class="ot">=</span> <span class="fu">gof_norm_loglike</span>(<span class="at">target_mean =</span> CRS.targets<span class="sc">$</span>Surv<span class="sc">$</span>value,</span>
+<span id="cb20-6"><a href=""></a>                              <span class="at">model_output =</span> model.res<span class="sc">$</span>Surv,</span>
+<span id="cb20-7"><a href=""></a>                              <span class="at">target_sd =</span> CRS.targets<span class="sc">$</span>Surv<span class="sc">$</span>se)</span>
+<span id="cb20-8"><a href=""></a>  <span class="fu">return</span>(v.GOF)</span>
+<span id="cb20-9"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="nm-calibration-run-the-calibration" class="slide level2">
@@ -834,57 +852,91 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="co"># Arrange parameter sets in order of fit</span></span>
 <span id="cb22-2"><a href=""></a>nm.calib.res <span class="ot">&lt;-</span> nm.calib.res[<span class="fu">order</span>(<span class="sc">-</span>nm.calib.res[,<span class="st">"Overall_fit"</span>]),]</span>
 <span id="cb22-3"><a href=""></a><span class="co"># Examine the top 10 best-fitting sets</span></span>
-<span id="cb22-4"><a href=""></a>nm.calib.res[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-4"><a href=""></a>nm.calib.res[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          p.Mets  p.DieMets Overall_fit
- [1,] 0.12439610 0.04810758    156.0328
- [2,] 0.04810757 0.12439632    156.0328
- [3,] 0.12439800 0.04810736    156.0328
- [4,] 0.12439921 0.04810714    156.0328
- [5,] 0.12439998 0.04810701    156.0328
- [6,] 0.12439728 0.04810703    156.0328
- [7,] 0.04810716 0.12439631    156.0328
- [8,] 0.04810842 0.12439197    156.0328
- [9,] 0.12439044 0.04810829    156.0328
-[10,] 0.12439814 0.04810673    156.0328</code></pre>
+<pre><code>         p.Mets  p.DieMets Overall_fit
+[1,] 0.12439610 0.04810758    156.0328
+[2,] 0.04810757 0.12439632    156.0328
+[3,] 0.12439800 0.04810736    156.0328
+[4,] 0.12439921 0.04810714    156.0328</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">table</span>(<span class="fu">round</span>(nm.calib.res[,<span class="dv">1</span>],<span class="at">digits=</span><span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+0.048 0.124 
+   52    48 </code></pre>
 </div>
 </div>
 </section>
 <section id="nm-calibration-results-from-100-starting-points-1" class="slide level2">
 <h2>NM calibration: results from 100 starting points</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data=</span><span class="fu">data.frame</span>(nm.calib.res))<span class="sc">+</span></span>
-<span id="cb24-2"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>p.Mets, <span class="at">y=</span>p.DieMets, <span class="at">overall_fit=</span>Overall_fit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data=</span><span class="fu">data.frame</span>(nm.calib.res))<span class="sc">+</span></span>
+<span id="cb26-2"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>p.Mets, <span class="at">y=</span>p.DieMets, <span class="at">overall_fit=</span>Overall_fit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="calibration_validation_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
-<section id="compare-results" class="slide level2">
-<h2>Compare results</h2>
+<section id="compare-nm-and-random-search" class="slide level2">
+<h2>Compare NM and random search</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>nm_best_fit_params <span class="ot">&lt;-</span> <span class="fu">c</span>(nm.calib.res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"p.Mets"</span>,  <span class="st">"p.DieMets"</span>)])</span>
-<span id="cb25-2"><a href=""></a>nm_best_fit_model <span class="ot">&lt;-</span> <span class="fu">markov_crs</span>(nm_best_fit_params)</span>
-<span id="cb25-3"><a href=""></a></span>
-<span id="cb25-4"><a href=""></a>t_compare <span class="ot">&lt;-</span> <span class="fu">cbind</span>(t_compare,</span>
-<span id="cb25-5"><a href=""></a>                   <span class="at">nelder_mead =</span> nm_best_fit_model<span class="sc">$</span>Surv)</span>
-<span id="cb25-6"><a href=""></a></span>
-<span id="cb25-7"><a href=""></a><span class="fu">ggplot</span>(t_compare, <span class="fu">aes</span>(<span class="at">x=</span>Time, <span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb25-8"><a href=""></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb25-9"><a href=""></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lb, <span class="at">ymax =</span>ub))<span class="sc">+</span></span>
-<span id="cb25-10"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">"red"</span>, <span class="fu">aes</span>(<span class="at">y=</span>random_search))<span class="sc">+</span></span>
-<span id="cb25-11"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Pr Survive"</span>)<span class="sc">+</span></span>
-<span id="cb25-12"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="fu">aes</span>(<span class="at">y=</span>nelder_mead))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>nm_best_fit_params <span class="ot">&lt;-</span> <span class="fu">c</span>(nm.calib.res[<span class="dv">1</span>, <span class="fu">c</span>(<span class="st">"p.Mets"</span>,  <span class="st">"p.DieMets"</span>)])</span>
+<span id="cb27-2"><a href=""></a>nm_best_fit_model <span class="ot">&lt;-</span> <span class="fu">markov_crs</span>(nm_best_fit_params)</span>
+<span id="cb27-3"><a href=""></a></span>
+<span id="cb27-4"><a href=""></a>t_compare <span class="ot">&lt;-</span> <span class="fu">cbind</span>(t_compare,</span>
+<span id="cb27-5"><a href=""></a>                   <span class="at">nelder_mead =</span> nm_best_fit_model<span class="sc">$</span>Surv)</span>
+<span id="cb27-6"><a href=""></a></span>
+<span id="cb27-7"><a href=""></a><span class="fu">ggplot</span>(t_compare, <span class="fu">aes</span>(<span class="at">x=</span>Time, <span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb27-8"><a href=""></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb27-9"><a href=""></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lb, <span class="at">ymax =</span>ub))<span class="sc">+</span></span>
+<span id="cb27-10"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">"red"</span>, <span class="fu">aes</span>(<span class="at">y=</span>random_search))<span class="sc">+</span></span>
+<span id="cb27-11"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Pr Survive"</span>)<span class="sc">+</span></span>
+<span id="cb27-12"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="fu">aes</span>(<span class="at">y=</span>nelder_mead))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="compare-results-1" class="slide level2">
-<h2>Compare results</h2>
-<p>Fit of NM (green) and random search (red) nearly identical in this case)</p>
+<section id="compare-nm-and-random-search-1" class="slide level2">
+<h2>Compare NM and random search</h2>
+<p>Fit of NM (green) and random search (red) nearly identical in this case</p>
 
 <img data-src="calibration_validation_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="model-nonidentifiability" class="slide level2">
+<h2>Model nonidentifiability</h2>
+<p>When &gt;1 parameter sets can produce the same output</p>
+<ul>
+<li><p>No unique model solution; one-to-many mapping between parameters &amp; outputs</p>
+<ul>
+<li>In linear regression, occurs when predictors are not linearly independent (multicollinearity)</li>
+</ul></li>
+<li><p>Identifiability is determined by parameters, model structure, and modelled outcomes</p></li>
+</ul>
+</section>
+<section id="handling-nonidentifiable-calibration-tasks" class="slide level2">
+<h2>Handling nonidentifiable calibration tasks</h2>
+<ul>
+<li><p>Parameters often nonidentifiable for a <u><strong>subset</strong></u> of model outcomes</p>
+<ul>
+<li><p>In our model, <code>p.mets</code> and <code>p.diemets</code> are unidentifiable for outcome of overall survival over time</p></li>
+<li><p>Adding another target can make the calibration task identifiable</p></li>
+</ul></li>
+<li><p>Identifiability not required for Bayesian calibration</p>
+<ul>
+<li>Multimodel posterior parameter sets are sometimes an honest reflection of our uncertainty</li>
+</ul></li>
+</ul>
+</section>
+<section id="adding-target-to-remove-nonidentifiability" class="slide level2">
+<h2>Adding target to remove nonidentifiability</h2>
+<p><img data-src="figs/NM_contors_identifiability.png" width="4179"> Added target on Log-ratio NED/Mets (<a href="https://doi.org/10.1177/0272989X18792283">Alarid-Escudero et. al.&nbsp;2018</a>)</p>
+</section>
+<section id="further-resource-on-nonidentifiability" class="slide level2">
+<h2>Further resource on nonidentifiability</h2>
+<p><a href="http://www.doi.org/10.1002/sim.70039">Semochkina and Walsh 2025. Incorporating Additional Evidence as Prior Information to Resolve Non-Identifiability in Bayesian Disease Model Calibration: A Tutorial</a></p>
+<p>Specific to Bayesian calibration, uses a DEQ epidemic model example</p>
+</section>
 <section id="what-about-uncertainty" class="slide level2">
 <h2>What about uncertainty?</h2>
 <ul>
 <li><p><strong>Deterministic:</strong> “What’s the best-fitting parameter set?” (random search and NM)</p></li>
-<li><p><strong>Probabilistic:</strong> “What <u>distribution</u> of parameters is <u>consistent with the uncertainty distributio</u>n of my calibration targets”</p></li>
+<li><p><strong>Probabilistic:</strong> “What <u>distribution</u> of parameters is <u>consistent with the uncertainty distribution</u> of my calibration targets”</p></li>
 <li><p><strong>Bayesian calibration</strong> allows us to also use data on both parameters and outcomes to estimate parameters</p>
 <ul>
 <li>Can quantify uncertainty even when parameters are non-identifiable!</li>
@@ -919,8 +971,8 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <h2>Sample importance resampling (SIR) method</h2>
 
 <img data-src="figs/SIR_4.png" class="r-stretch"></section>
-<section id="alternatives-to-sir" class="slide level2">
-<h2>Alternatives to SIR</h2>
+<section id="alternatives-to-sir-calibration" class="slide level2">
+<h2>Alternatives to SIR calibration</h2>
 <p>Incremental-mixture importance sampling (<a href="https://doi.org/10.1111/j.1541-0420.2010.01399.x">Raftery et. al.&nbsp;2010</a>, <a href="https://doi.org/10.1007/s40273-017-0494-4">Menzies et. al.&nbsp;2017</a>)</p>
 <ul>
 <li>More efficient than SIR and fully Bayesian</li>
@@ -930,27 +982,53 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <li>Use target ranges instead of likelihood</li>
 </ul>
 <p>Incremental mixture approximate Bayesian computation (<a href="doi.org/10.1214/19-AOAS1279">Rutter et. al.&nbsp;2019</a>)</p>
+<p>RobustCalibration R package with GaSP emulator (<a href="https://doi.org/10.48550/arXiv.2201.01476">Gu 2022</a>)</p>
 </section>
 <section id="bayesian-calibration-tutorial" class="slide level2">
 <h2>Bayesian calibration tutorial</h2>
 <p>Let’s take a quick look at the <a href="https://darth-git.github.io/calibSMDM2018-materials/tutorials/imis_3state.html">Bayesian tutorial by Enns et. al</a>.</p>
 </section>
-<section id="recap-of-calibration" class="slide level2">
-<h2>Recap of calibration</h2>
+<section id="challenges-in-bayesian-calibration" class="slide level2">
+<h2>Challenges in Bayesian calibration</h2>
 <ul>
-<li><p>Calibration identifies parameter values that produce modeled outcomes consisent with target data</p></li>
-<li><p>Deterministic methods identify best-fitting point estimates</p></li>
-<li><p>(Approximately) bayesian methods can approximate parameter draws over joint distribution of all parameters</p>
+<li><p>Running many (sometimes millions) of parameter sets computationally challenging</p>
 <ul>
-<li>Needed to vary uncertain parameters in probabilistic sensitivity analysis!</li>
+<li><p>Can often simplify model to only compute targets</p></li>
+<li><p>Can develop metamodels (emulators) that approximate full model but run much faster</p></li>
+</ul></li>
+<li><p>Prior specification</p>
+<ul>
+<li><p>Overly wide: wasted compute</p></li>
+<li><p>Overly narrow: risk of missing good-fitting parameter sets</p></li>
+<li><p>Analyze prior vs.&nbsp;posterior plots to assess if priors seem overly restrictive, or could be narrowed in future iterations</p></li>
 </ul></li>
 </ul>
 </section>
-<section id="today-1" class="slide level2">
+<section id="metamodel-for-calibration" class="slide level2">
+<h2>Metamodel for calibration</h2>
+<p><img data-src="figs/BayCann%20schematic.png"> From <a href="https://doi.org/10.1007/s40273-025-01571-3">Pi et. al.&nbsp;2026, DESCIPHR cancer modelling framework with DES and Bayesian calibration</a></p>
+</section>
+<section id="ex-prior-and-posterior-plots" class="slide level2">
+<h2>Ex: Prior and posterior plots</h2>
+
+<img data-src="figs/CMAJ%20prior%20posterior%20plots.png" class="r-stretch"><p>Source: <a href="https://doi.org/10.1503/cmaj.250591">McNally et. al.&nbsp;2026 CMAJ</a></p>
+</section>
+<section id="recap-of-calibration" class="slide level2">
+<h2>Recap of calibration</h2>
+<ul>
+<li><p>Calibration identifies parameter values that produce modeled outcomes consistent with target data</p></li>
+<li><p>Deterministic methods identify best-fitting point estimates</p></li>
+<li><p>(Approximately) bayesian methods can approximate parameter draws over joint distribution of all parameters</p>
+<ul>
+<li>Needed to vary uncertain calibrated parameters in probabilistic sensitivity analysis!</li>
+</ul></li>
+</ul>
+</section>
+<section id="today-2" class="slide level2">
 <h2>Today</h2>
 <ul>
 <li><p>Model calibration</p></li>
-<li><p><strong>Model validation</strong></p></li>
+<li><p><u><strong>Model validation</strong></u></p></li>
 </ul>
 </section>
 <section id="model-credibility" class="slide level2">
@@ -967,11 +1045,11 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <ul>
 <li>Oncosim (Canada) or MISCAN (USA)</li>
 </ul></li>
-<li><p>Some models adapted after-the-fact to new decision problem</p></li>
+<li><p>Other models adapted after-the-fact to new decision problem</p></li>
 <li><p>Must consider how decision-relevant trade-offs differ from original use case</p>
 <ul>
-<li><p>Simplifying assumption that is OK for use case 1 might be problem for use case 2!</p></li>
-<li><p>Model can have different level of validity for different applications</p></li>
+<li><p>Simplifying assumptions that are OK for case 1 might be problem for case 2!</p></li>
+<li><p>Models can have different level of validity for different applications</p></li>
 </ul></li>
 </ul>
 </section>
@@ -1066,7 +1144,7 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <ul>
 <li><p><strong>Sources:</strong> Population statistics, epidemiological studies, surveys, clinical trials, claims data, electronic health records</p></li>
 <li><p><strong><em>Independent</em></strong> external validation (gold standard) uses data that was not considered in model development or calibration</p></li>
-<li><p>Ideally, validation plan developed before any modeled results generated</p></li>
+<li><p>Ideally, validation plan developed before any modeled results generated to avoid cherry picking</p></li>
 </ul>
 </section>
 <section id="external-validation-best-practice-1" class="slide level2">
@@ -1119,8 +1197,8 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <li><p>Look almost identical!</p></li>
 <li><p>Difference is:</p>
 <ul>
-<li><p>Calibration plots compare modeled output to <strong>targets</strong> (estimates from data that were used to fit the model)</p></li>
-<li><p>Validation plots compare modeled output to <strong>external data</strong> (ideally, data that was not used at all in model development)</p></li>
+<li><p>Calibration plots compare modeled output to <u><strong>targets</strong></u> (used to fit the model)</p></li>
+<li><p>Validation plots compare modeled output to <u><strong>external data</strong></u> (ideally, data that was not considered in model development)</p></li>
 </ul></li>
 </ul>
 </section>
@@ -1132,7 +1210,7 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <li><p>To maximize fit to data, use all available data to calibrate</p></li>
 <li><p>To maximize confidence that model reflects reality without being overfit, use available data for external validation</p></li>
 </ul></li>
-<li><p>Decision must be made case-by-case, depending what data are available</p></li>
+<li><p>Case-by-case decision that depends what data are available</p></li>
 </ul>
 </section>
 <section id="recap-of-validation" class="slide level2">
@@ -1148,27 +1226,15 @@ B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \un
 <section id="logistics" class="slide level2">
 <h2>Logistics</h2>
 <ul>
-<li><p>Assignment 4 (sensitivity analysis) due Fri, Oct 25</p></li>
-<li><p>Project proposal due Fri, Nov 1</p>
+<li><p>Complete reading before next class</p></li>
+<li><p><strong>Project proposal</strong> due Fri, Feb 27</p></li>
+<li><p><strong>Assignment 4</strong></p>
 <ul>
-<li>I suggest discussing your idea with me before proposal deadline</li>
+<li><p>Posted Fri, Feb 20</p></li>
+<li><p>Due Wed, Mar 11</p></li>
 </ul></li>
-<li><p>Next class (Tues Oct 22): First applied guest lecture</p>
-<ul>
-<li>Class will meet Zoom only</li>
-</ul></li>
-</ul>
-</section>
-<section id="expectations-for-guest-lectures" class="slide level2">
-<h2>Expectations for guest lectures</h2>
-<ul>
-<li><p>Read paper, look at code, and prepare a question in advance</p></li>
-<li><p>Most lecturers joining via Zoom, but we will meet in the regular classroom</p>
-<ul>
-<li><p><u><strong>Exceptions</strong></u>: Tues Oct 22 and Tues Oct 29 will be Zoom only</p></li>
-<li><p>When joining via Zoom, please have camera on most of the time</p></li>
-</ul></li>
-<li><p>Guest lectures factor more heavily than method lectures in determining class engagement grade (8% of final grade)</p></li>
+<li><p><strong>Open source model presentations</strong> in class on Thurs, March 12</p></li>
+<li><p><strong>Office hours</strong> on Mondays 2:30pm to 3:30pm, room 1128</p></li>
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">

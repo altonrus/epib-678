@@ -16,8 +16,6 @@ library(ggplot2)
 library(deSolve) # for solving ODEs
 theme_set(theme_bw()) #set ggplot theme
 #use install.packages("Package") for any you don't have already
-
-
 ```
 
 ## Today
@@ -100,7 +98,6 @@ theme_set(theme_bw()) #set ggplot theme
     -   Other factors
 :::
 :::::
-
 
 ## Today
 
@@ -239,8 +236,6 @@ sir_system=function(t, y, parms){
 }
 ```
 
-
-
 ## Calling system of equations
 
 <https://github.com/martinkrz/posepi1/blob/master/R/models.R>
@@ -268,10 +263,9 @@ sir = function(beta=3, gamma=2, vac=0, tmax=20, step=sir_system_time_step) {
 
 -   Costs, QALYs calculated by integrating over time
 
--  Ex: if cost per unit time infectious = $c_I$, then total cost while infecitous is:
-$$
-\int_0^T c I(t) dt
-$$
+-   Ex: if cost per unit time infectious = $c_I$, then total cost while infecitous is: $$
+    \int_0^T c I(t) dt
+    $$
 
 ## DEQ resources
 
@@ -352,7 +346,6 @@ Actions can have consequences through complex, non-linear [**feedback loops**]{.
 
 -   [Vensim software](https://vensim.com/free-download/)
 
-
 ## Limitations of SIR-type DEQ models
 
 -   Assume homogeneous mixing of population
@@ -361,7 +354,7 @@ Actions can have consequences through complex, non-linear [**feedback loops**]{.
 
 -   Cannot capture history-dependence (e.g., waning immunity)
 
-    -  Can approximate with more compartments
+    -   Can approximate with more compartments
 
 ## Today
 
@@ -454,12 +447,11 @@ $$
 E[f(X)] \neq f(E[X])
 $$
 
-![](figs/jensen_inequality.jpg)
-Source: [K Shanti Priya on Medium](https://medium.com/@k.shantipriya27/jensens-inequality-unveiling-its-power-in-data-science-and-machine-learning-ecf75cadf10f)
+![](figs/jensen_inequality.jpg) Source: [K Shanti Priya on Medium](https://medium.com/@k.shantipriya27/jensens-inequality-unveiling-its-power-in-data-science-and-machine-learning-ecf75cadf10f)
 
 ## Implications for modelling choice
 
-For a model $f()$, individual parameters $X$, and model output $Y$:
+For a non-linear model $f()$, individual parameters $X$, and model output $Y$:
 
 $$
 f(E[X]) \neq E[f(X)]
@@ -490,7 +482,7 @@ $$
 -   **Assignment 4**
 
     -   Will be posted by Fri, Feb 20
-    
+
     -   Due Wed, Mar 11
 
 -   **Open source model presentations** in class on Thurs, March 12

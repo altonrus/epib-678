@@ -1,8 +1,8 @@
 ---
 title: "Calibration and validation"
-subtitle: "EPIB  676 session 13, McGill University"
+subtitle: "EPIB  678 session 14, McGill University"
 author: "Alton Russell"
-date: "10 Oct 2024"
+date: "19 Feb 2026"
 format: revealjs
 editor: visual
 ---
@@ -21,19 +21,21 @@ library(lhs)
 library(psych)
 ```
 
-## To explore
+## Today
 
-Incorporating Additional Evidence as Prior Information to Resolve Non-Identifiability in Bayesian Disease Model Calibration: A Tutorial
+-   Wrapping up DEQ lecture
 
-[**https://doi.org/10.1002/sim.70039**](https://doi.org/10.1002/sim.70039)
+-   Model calibration
 
-RobustCalibration: Robust Calibration of Computer Models in R
+-   Model validation
 
-<http://arxiv.org/abs/2201.01476>
+## Wrapping up DEQ lecture
+
+<https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/13-differential_equations/deq_models.html#/feedback-loops-in-opioid-example>
 
 ## Today
 
--   **Model calibration**
+-   [**Model calibration**]{.underline}
 
     -   Concept
 
@@ -108,6 +110,8 @@ Eva Enns, Fernando Alarid-Escudero, and Caleb Easterly 2018
 
 ::: {.column width="35%"}
 Calibrate `p.Mets` and `p.DieMets` by fitting to observed survival data
+
+**Abbreviations:** Mets, metastasis; NED, no evidence of diseases
 :::
 :::::
 
@@ -241,9 +245,9 @@ psych::pairs.panels(rs.param.samp)
 
 -   For numerical stability, we compute **log-likelihood**
 
-## Why maximize log-likelihood?
+## Why log-likelihood?
 
-Calibration identifies parameters that maximize **t**otal likelihood, [product of the likelihood]{.underline} of each target
+Calibration identifies parameters that maximize total likelihood, [the product of the likelihood]{.underline} of each target
 
 $$
 A: \underset{\Theta}{\operatorname{argmax}} p(\textbf{x} \mid \Theta ) = \underset{\Theta}{\operatorname{argmax}} \prod_{i=1}^N p(x_i \mid \Theta)
@@ -253,7 +257,7 @@ $$
 B: \underset{\Theta}{\operatorname{argmax}} \ln p(\textbf{x} \mid \Theta ) = \underset{\Theta}{\operatorname{argmax}}\sum_{i=1}^N \ln p(x_i \mid \Theta)
 $$
 
-Floating point precision issues are less likely with B vs. A
+Floating point precision issues less likely with B than with A
 
 ## Goodness-of-fit function
 
@@ -286,7 +290,7 @@ rs.loglike <- rep(0, rs.n.samp)
 for (j in 1:rs.n.samp){
   #  Run model for a given parameter set
   model.res = markov_crs(v.params = rs.param.samp[j, ])
-    # Calculate goodness-of-fit of model outputs to targets 
+  # Calculate goodness-of-fit of model outputs to targets 
   # (log likelihood of the model output given the targets)
   rs.loglike[j] = gof_norm_loglike(model_output = model.res$Surv,
                                target_mean = CRS.targets$Surv$value,
@@ -332,21 +336,21 @@ ggplot(t_compare, aes(x=Time, y=value))+
 
 ## Alternative goodness-of-fit measures
 
-Other likelihood functions
+-   **Other likelihood distributions:** Beta, Dirichlet, gamma, etc.
 
--   Other distribution: Beta, Dirichlet, gamma, etc.
+-   **Distribution-free:** Absolute error, weighted sum of square error
 
--   Distribution-free: Weighted sum of square error
-
-Can define for \>1 target
+Handling \>1 target
 
 -   Judge parameter set based on combined measure, e.g., weighted sum where more "important" targets given higher weights
 
 ## Nelder-Mead calibration
 
-Whereas random search is undirected, Nelder-Mead is directed
+-   Nelder-Mead is a directed search method for identifying a local minimum or maximum to a function
 
-Sample several starting points with goal of finding global optimum
+    -   Unlike random search which is undirected
+
+-   Sample several starting points with goal of finding global optimum
 
 ## Local and global optima
 
@@ -358,26 +362,27 @@ Source: [Chao Jin 2015](http://dx.doi.org/10.13140/RG.2.2.32537.83041)
 
 ```{r}
 #| echo: true
-n.init <- 100
-nm.params.init <- matrix(nrow=n.init,ncol=n.param)
+n.init <- 100; n.param = 2
 set.seed(101)
-for (i in 1:n.param){
-  nm.params.init[,i] <- runif(n.init,min=lb[i],max=ub[i])
-}
-colnames(nm.params.init) <- param.names
+nm.params.init <- cbind(
+  runif(n.init, min = lb[1], max = ub[1]),
+  runif(n.init, min = lb[2], max = ub[2])) |>
+  as.matrix()
+
+dimnames(nm.params.init) <- list(NULL, param.names)
+
 head(nm.params.init, 6)
 ```
 
 ## NM calibration: objective function
 
-Same basic steps as random search, just put into a function
+Same basic steps as random search, just put into a function that we can call within the optimizer
 
 ```{r}
 #| echo: true
 nm_objective = function(v.params){
   ###   Run model for parametr set "v.params"
   model.res = markov_crs(v.params)
-
   # log likelihood  
   v.GOF = gof_norm_loglike(target_mean = CRS.targets$Surv$value,
                               model_output = model.res$Surv,
@@ -413,8 +418,9 @@ for (j in 1:n.init){
 # Arrange parameter sets in order of fit
 nm.calib.res <- nm.calib.res[order(-nm.calib.res[,"Overall_fit"]),]
 # Examine the top 10 best-fitting sets
-nm.calib.res[1:10,]
+nm.calib.res[1:4,]
 
+table(round(nm.calib.res[,1],digits=3))
 
 ```
 
@@ -426,7 +432,7 @@ ggplot(data=data.frame(nm.calib.res))+
   geom_point(aes(x=p.Mets, y=p.DieMets, overall_fit=Overall_fit))
 ```
 
-## Compare results
+## Compare NM and random search
 
 ```{r}
 #| echo: true
@@ -445,9 +451,9 @@ ggplot(t_compare, aes(x=Time, y=value))+
   geom_point(color="green", alpha = 0.5, aes(y=nelder_mead))
 ```
 
-## Compare results
+## Compare NM and random search
 
-Fit of NM (green) and random search (red) nearly identical in this case)
+Fit of NM (green) and random search (red) nearly identical in this case
 
 ```{r}
 #| echo: false
@@ -465,11 +471,43 @@ ggplot(t_compare, aes(x=Time, y=value))+
   geom_point(color="green", alpha = 0.5, aes(y=nelder_mead))
 ```
 
+## Model nonidentifiability
+
+When \>1 parameter sets can produce the same output
+
+-   No unique model solution; one-to-many mapping between parameters & outputs
+
+    -   In linear regression, occurs when predictors are not linearly independent (multicollinearity)
+
+-   Identifiability is determined by parameters, model structure, and modelled outcomes
+
+## Handling nonidentifiable calibration tasks
+
+-   Parameters often nonidentifiable for a [**subset**]{.underline} of model outcomes
+
+    -   In our model, `p.mets` and `p.diemets` are unidentifiable for outcome of overall survival over time
+
+    -   Adding another target can make the calibration task identifiable
+
+-   Identifiability not required for Bayesian calibration
+
+    -   Multimodel posterior parameter sets are sometimes an honest reflection of our uncertainty
+
+## Adding target to remove nonidentifiability
+
+![](figs/NM_contors_identifiability.png){width="4179"} Added target on Log-ratio NED/Mets ([Alarid-Escudero et. al. 2018](https://doi.org/10.1177/0272989X18792283))
+
+## Further resource on nonidentifiability
+
+[Semochkina and Walsh 2025. Incorporating Additional Evidence as Prior Information to Resolve Non-Identifiability in Bayesian Disease Model Calibration: A Tutorial](http://www.doi.org/10.1002/sim.70039)
+
+Specific to Bayesian calibration, uses a DEQ epidemic model example
+
 ## What about uncertainty?
 
 -   **Deterministic:** "What's the best-fitting parameter set?" (random search and NM)
 
--   **Probabilistic:** "What [distribution]{.underline} of parameters is [consistent with the uncertainty distributio]{.underline}n of my calibration targets"
+-   **Probabilistic:** "What [distribution]{.underline} of parameters is [consistent with the uncertainty distribution]{.underline} of my calibration targets"
 
 -   **Bayesian calibration** allows us to also use data on both parameters and outcomes to estimate parameters
 
@@ -503,7 +541,7 @@ ggplot(t_compare, aes(x=Time, y=value))+
 
 ![](figs/SIR_4.png)
 
-## Alternatives to SIR
+## Alternatives to SIR calibration
 
 Incremental-mixture importance sampling ([Raftery et. al. 2010](https://doi.org/10.1111/j.1541-0420.2010.01399.x), [Menzies et. al. 2017](https://doi.org/10.1007/s40273-017-0494-4))
 
@@ -515,25 +553,53 @@ Approximate bayesian computation ([Shewmaker et. al. 2022](https://doi.org/10.11
 
 Incremental mixture approximate Bayesian computation ([Rutter et. al. 2019](doi.org/10.1214/19-AOAS1279))
 
+RobustCalibration R package with GaSP emulator ([Gu 2022](https://doi.org/10.48550/arXiv.2201.01476))
+
 ## Bayesian calibration tutorial
 
 Let's take a quick look at the [Bayesian tutorial by Enns et. al](https://darth-git.github.io/calibSMDM2018-materials/tutorials/imis_3state.html).
 
+## Challenges in Bayesian calibration
+
+-   Running many (sometimes millions) of parameter sets computationally challenging
+
+    -   Can often simplify model to only compute targets
+
+    -   Can develop metamodels (emulators) that approximate full model but run much faster
+
+-   Prior specification
+
+    -   Overly wide: wasted compute
+
+    -   Overly narrow: risk of missing good-fitting parameter sets
+
+    -   Analyze prior vs. posterior plots to assess if priors seem overly restrictive, or could be narrowed in future iterations
+
+## Metamodel for calibration
+
+![](figs/BayCann%20schematic.png) From [Pi et. al. 2026, DESCIPHR cancer modelling framework with DES and Bayesian calibration](https://doi.org/10.1007/s40273-025-01571-3)
+
+## Ex: Prior and posterior plots
+
+![](figs/CMAJ%20prior%20posterior%20plots.png)
+
+Source: [McNally et. al. 2026 CMAJ](https://doi.org/10.1503/cmaj.250591)
+
 ## Recap of calibration
 
--   Calibration identifies parameter values that produce modeled outcomes consisent with target data
+-   Calibration identifies parameter values that produce modeled outcomes consistent with target data
 
 -   Deterministic methods identify best-fitting point estimates
 
 -   (Approximately) bayesian methods can approximate parameter draws over joint distribution of all parameters
 
-    -   Needed to vary uncertain parameters in probabilistic sensitivity analysis!
+    -   Needed to vary uncertain calibrated parameters in probabilistic sensitivity analysis!
 
 ## Today
 
 -   Model calibration
 
--   **Model validation**
+-   [**Model validation**]{.underline}
 
 ## Model credibility
 
@@ -547,13 +613,13 @@ Let's take a quick look at the [Bayesian tutorial by Enns et. al](https://darth-
 
     -   Oncosim (Canada) or MISCAN (USA)
 
--   Some models adapted after-the-fact to new decision problem
+-   Other models adapted after-the-fact to new decision problem
 
 -   Must consider how decision-relevant trade-offs differ from original use case
 
-    -   Simplifying assumption that is OK for use case 1 might be problem for use case 2!
+    -   Simplifying assumptions that are OK for case 1 might be problem for case 2!
 
-    -   Model can have different level of validity for different applications
+    -   Models can have different level of validity for different applications
 
 ## Types of validity
 
@@ -641,7 +707,7 @@ Eddy et. al. 2012 [Model transparency and validation report by ISPOR-SMDM Modeli
 
 -   ***Independent*** external validation (gold standard) uses data that was not considered in model development or calibration
 
--   Ideally, validation plan developed before any modeled results generated
+-   Ideally, validation plan developed before any modeled results generated to avoid cherry picking
 
 ## External validation best practice 1
 
@@ -693,9 +759,9 @@ Only applies to models predicting into the future.
 
 -   Difference is:
 
-    -   Calibration plots compare modeled output to **targets** (estimates from data that were used to fit the model)
+    -   Calibration plots compare modeled output to [**targets**]{.underline} (used to fit the model)
 
-    -   Validation plots compare modeled output to **external data** (ideally, data that was not used at all in model development)
+    -   Validation plots compare modeled output to [**external data**]{.underline} (ideally, data that was not considered in model development)
 
 ## Calibration validation trade-off
 
@@ -705,7 +771,7 @@ Only applies to models predicting into the future.
 
     -   To maximize confidence that model reflects reality without being overfit, use available data for external validation
 
--   Decision must be made case-by-case, depending what data are available
+-   Case-by-case decision that depends what data are available
 
 ## Recap of validation
 
@@ -717,24 +783,16 @@ Only applies to models predicting into the future.
 
 ## Logistics
 
--   Assignment 4 (sensitivity analysis) due Fri, Oct 25
+-   Complete reading before next class
 
--   Project proposal due Fri, Nov 1
+-   **Project proposal** due Fri, Feb 27
 
-    -   I suggest discussing your idea with me before proposal deadline
+-   **Assignment 4**
 
--   Next class (Tues Oct 22): First applied guest lecture
+    -   Posted Fri, Feb 20
 
-    -   Class will meet Zoom only
+    -   Due Wed, Mar 11
 
-## Expectations for guest lectures
+-   **Open source model presentations** in class on Thurs, March 12
 
--   Read paper, look at code, and prepare a question in advance
-
--   Most lecturers joining via Zoom, but we will meet in the regular classroom
-
-    -   [**Exceptions**]{.underline}: Tues Oct 22 and Tues Oct 29 will be Zoom only
-
-    -   When joining via Zoom, please have camera on most of the time
-
--   Guest lectures factor more heavily than method lectures in determining class engagement grade (8% of final grade)
+-   **Office hours** on Mondays 2:30pm to 3:30pm, room 1128
