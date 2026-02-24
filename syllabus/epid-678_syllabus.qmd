@@ -16,8 +16,6 @@ To render both html and pdf, use
 
 quarto::quarto_render("syllabus/epid-678_syllabus.qmd") 
 
-
-
 -->
 ```
 

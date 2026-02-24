@@ -19,6 +19,7 @@ library(ggplot2)
 library(dampack)
 library(tidyr)
 library(dplyr)
+library(deSolve)
 theme_set(theme_bw()) #Makes ggplots look better
 ```
 
@@ -531,6 +532,296 @@ for (param in reward_param_names){
 
 ```
 
+
+# 2. Differential equation model
+
+This section is uses the model of a hypothetical sexually transmitted disease (loosely based on HIV) from [Menzies et. al. 2017](https://doi.org/10.1007/s40273-017-0494-4), a tutorial on Bayesian model calibration. They provide working [R code for their implementation of model](https://doi.org/10.7910/DVN/QXM09F).
+
+The model states and parameters for this model are defined in this figure:
+
+![](menzies_model.png)
+
+The differential equations defining this model are:
+
+$$
+\begin{aligned}
+\frac{dN}{dt} &= ab - \mu^{B} N & \text{non-susceptible} \\
+\frac{dS}{dt} &= a(1-b) - \mu^{B} S - \lambda_tS & \text{susceptible} \\
+\frac{dE}{dt} &= \lambda_tS - (\mu^{B} + \mu^{E}) E - r_t^E E - cE & \text{early disease} \\
+\frac{dL}{dt} &= pE - (\mu^{B} + \mu^{L}) L - r^L L & \text{late disease} \\
+\frac{dT}{dt} &= r_t^E E + r^L L - (\mu^{B} + \mu^{T}) T & \text{on treatment} \\
+\frac{dD}{dt} &= \mu^{B} (N+S+E+L+T) + \mu^{E} E + \mu^{L} L + \mu^{T} T & \text{dead}
+\end{aligned}
+$$
+
+The force of infection $\lambda_t$ is defined as $\lambda_t = \rho \frac{E+L}{S+E+L+T}$, where $\rho$ is the effective contact rate. The model simulation begins at time 0 (corresponding to 1990) until time 51 (corresponding to 2040). Years 0-30 (1990-2020) are used to simulate the epidemic until the "present day," and years 30-51 (2020-2040) are used to project future outcomes for a policy comparison. The policy comparison is between two scenarios:
+
+-   **Base case:** only individuals with late-stage disease initiate treatment
+-   **Expanded treatment:** individuals with early-stage disease initiate treatment at the same rate beginning in year 30.
+
+The rate of treatment update during early disease $r^E$ is set to 0 for the first 30 years in both scenarios. In the "expanded treatment access" scenario, $r^E$ is set to the same value as $r^L$ beginning in year 30.
+
+## 1a. Menzies 2019 implementation
+
+This code chunk shows the model implementation from Menzies et. al. with minor edits.
+
+```{r}
+##############################################
+################### MODEL ####################
+##############################################
+# This function estimates outcomes describing epidemiology of a hypothetical disease
+# to assess a policy that expands treatment access to individual's with early 
+# stage disease.
+
+mod_menzies <- function(par_vector, init_pop) {
+  # par_vector: a vector of model parameters
+  mu_e    <- par_vector[1]   # cause-specific mortality rate with early-stage disease
+  mu_l    <- par_vector[2]   # cause-specific mortality rate with late-stage disease
+  mu_t    <- par_vector[3]   # cause-specific mortality rate on treatment
+  p       <- par_vector[4]   # transtion rate from early to late-stage disease
+  r_l    <- par_vector[5]   # rate of uptake onto treatment from late-stage disease
+  r_e    <- par_vector[6]   # rate of uptake onto treatment from early-stage disease (only non-zero in expanded treatment access scenario)
+  rho    <- par_vector[7]   # effective contact rate 
+  b      <- par_vector[8]   # fraction of population in at-risk group
+  mu_b   <- par_vector[9]  # background mortality rate
+  a      <- par_vector[10] # annual birth rate   
+  
+  ######## Prepare to run model ###################
+  n_yrs    <- 51   # no. years to simulate (30 to present, 51 for 20 year analytic horizon)
+  sim      <- 1:2  # which scenarios to simulate: 1 = base case, 2 = expanded treatment access
+  v_mu     <- c(0,0,mu_e,mu_l,mu_t)+mu_b             # vector of mortality rates
+  trace    <- matrix(NA,12*n_yrs+1,6)                  # creates a table to store simulation trace
+  colnames(trace) <- c("N","S","E","L","T","D")
+  rownames(trace) <- seq(from=0, to=51, by=1/12)
+  results  <- list("base_case" = trace,
+                   "expanded_tx" = trace)
+  
+  ######## Run model ###################
+  for(s in sim) { # loop over two scenarios: 1 = base case, 2 = expanded treatment access
+    # reset population vector to initial population at start of simulation
+    #.   and fill in first row of trace matrix (cohort distribution across states
+    #.   at time 0)
+    results[[s]][1,] <- P0 <- P1 <- init_pop 
+    
+    # loop over months and update state distribution
+    for(m in 1:(12*n_yrs)) { 
+      # P0: population distribution at start of month
+      # P!: population distribution at end of month (after applying transitions)
+      
+      # calculate force of infection
+      lambda    <- rho*sum(P0[3:4])/sum(P0[2:5]) 
+      
+      # calculate transitions each month and update P1
+      #.  births: entries into N and S
+      P1[1]   <- P1[1]+a*(1-b)/12 
+      P1[2]   <- P1[2]+a*b/12
+      #.  deaths: N, S, E, L, T, to D
+      P1[-6]    <- P1[-6]-P0[-6]*v_mu/12         
+      P1[6]     <- P1[6]+sum(P0[-6]*v_mu/12)
+      #.  infections: S to E
+      P1[2]     <- P1[2]-P0[2]*lambda/12         
+      P1[3]     <- P1[3]+P0[2]*lambda/12
+      #.  disease progression: E to L
+      P1[3]     <- P1[3]-P0[3]*p/12
+      P1[4]     <- P1[4]+P0[3]*p/12
+      #.  treatment uptake: L to T
+      P1[4]     <- P1[4]-P0[4]*r_l/12
+      P1[5]     <- P1[5]+P0[4]*r_l/12
+      
+      if(s==2 & m>(12*30)) {
+        #.  treatment uptake: E to T (scenario 2)
+        P1[3]   <- P1[3]-P0[3]*r_e/12
+        P1[5]   <- P1[5]+P0[3]*r_e/12
+      }
+      results[[s]][m+1,] <- P0 <- P1                      # fill trace, reset pop vectors
+    }
+  }
+  
+  ######## Report results ###################
+  return(results)
+}
+
+
+# create vector of parameters
+par_vector <- c(0.05, #mu_E
+                0.25, #mu_L
+                0.025, #mu_t
+                0.10, #p
+                0.5, #r_L
+                0.5, #r_E
+                0.5, #rho
+                0.20, #b
+                0.15, #mu_B
+                0.15*1e6 #a, birth rate 
+)
+
+# create a vector of state names
+state_names <- c("N","S","E","L","T","D")
+
+# creates starting vector for population
+b <- par_vector[8]
+init_pop <- c(1-b,
+              b-0.001,
+              0.001,
+              0,
+              0,
+              0)  
+names(init_pop) <- state_names
+init_pop <- init_pop*1e6 #make initial population 1 million people
+
+
+# run the model on the mean parameter set 
+#. with project_future = T. Print inc_LY and inc_cost to console
+res_menzies <- mod_menzies(par_vector, init_pop)
+
+trace_base_case <- res_menzies$base_case
+trace_expanded_tx <- res_menzies$expanded_tx
+
+# Plot cohort trace
+
+# Merge trace plots, long format dataframe for ggplot
+t_trace_long <- rbind(
+  cbind(as.data.frame(trace_base_case),
+        year=as.numeric(rownames(trace_base_case)),
+        scenario="base case"),
+  cbind(as.data.frame(trace_expanded_tx),
+        year=as.numeric(rownames(trace_base_case)),
+        scenario="expanded tx")
+) |> 
+  pivot_longer(cols = c("N","S","E","L","T","D"), names_to = "state", values_to = "count")
+
+
+ggplot(data = t_trace_long) +
+  geom_line(aes(x=year, y=count, color=state))+
+  facet_wrap(~scenario)+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x="Year", y="Number of people", color="Health state")+
+  theme(legend.position = "bottom")+
+  geom_vline(xintercept = 30, linetype = "dashed", color = "grey")+
+  ggtitle("Cohort trace, all cohorts and all years")
+
+# Plot from year 30 on, excluding the non-susceptible and dead cohorts
+ggplot(data = t_trace_long |> filter(year >= 30, !state %in% c("N","D"))) +
+  geom_line(aes(x=year, y=count, color=state))+
+  facet_wrap(~scenario)+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x="Year", y="Number of people", color="Health state")+
+  theme(legend.position = "bottom")+
+  geom_vline(xintercept = 30, linetype = "dashed", color = "grey")+
+  ggtitle("Cohort trace, years 30-51")
+
+```
+
+## 1b. Implementing with desolve
+
+```{r}
+deq_system = function(
+                      times, #time points to evaluate 
+                      y, # state variables at t[1] (usually 0)
+                      parms #parameter vector
+                      ){
+  
+  
+  # Extract parameters from parms vector
+  mu_e  <- parms[1]   # cause-specific mortality rate with early-stage disease
+  mu_l <- parms[2]   # cause-specific mortality rate with late-stage disease
+  mu_t <- parms[3]   # cause-specific mortality rate on treatment
+  p    <- parms[4]   # transtion rate from early to late-stage disease
+  r_l  <- parms[5]   # rate of uptake onto treatment from late-stage disease
+  r_e  <- parms[6]   # rate of uptake onto treatment from early-stage disease (only non-zero in expanded treatment access scenario)
+  rho  <- parms[7]   # effective contact rate 
+  b    <- parms[8]   # fraction of population in at-risk group
+  mu_b <- parms[9]           # background mortality rate hard-coded as 0.015
+  
+  
+  # Extract state variables from y
+  N <- y[1]
+  S <- y[2]
+  E <- y[3]
+  L <- y[4]
+  T <- y[5]
+  D <- y[6]
+  
+  # Calculate force of infection
+  lambdat   <- rho*(E+L)/(S+E+L+T)
+  
+  # Define differential equations
+  dN_dt = mu_b*b - mu_b*N #dN/dt
+  dS_dt = mu_b*(1-b) - mu_b*S - lambdat*S #dS/dt
+  dE_dt = lambdat*S - (mu_b + mu_e)*E - r_e*E - p*E #dE/dt
+  dL_dt = p*E - (mu_b + mu_l)*L - r_l*L #dL/dt
+  dT_dt = r_e*E + r_l*L - (mu_b + mu_t)*T #dT/dt
+  dD_dt = mu_b*(N+S+E+L+T) + mu_e*E + mu_l*L + mu_t*T #dD/dt
+  
+  # Return list of derivatives
+  return(
+    c("N" = dN_dt, "S" = dS_dt, "E" = dE_dt, 
+      "L" = dL_dt, "T" = dT_dt, "T" = dD_dt) |>list()
+  )
+}
+
+
+# deq_system = function(t,
+#                       y,
+#                       par_vector){
+#   # Extract state variables from par_vector
+#   
+#   
+#   # Define differential equations
+#   dN_dt = NA
+#   dS_dt = NA
+#   dE_dt = NA
+#   dL_dt = NA
+#   dT_dt = NA
+#   dD_dt = NA
+#   
+#   # Return list of derivatives
+#   return(
+#     list(dN_dt, dS_dt, dE_dt, dL_dt, dT_dt, dD_dt)
+#   )
+# }
+
+
+```
+
+```{r}
+# Test out the deq_system function by running it with the base-case parameters and plotting the results
+
+
+
+par_vector <- c(0.05, #mu_E
+                0.25, #mu_L
+                0.025, #mu_t
+                0.10, #p
+                0.5, #r_L
+                0, #r_E
+                0.5, #rho
+                0.20) #b
+
+init_pop <- c(1-par_vector[8],par_vector[8]-0.001,0.001,0,0,0)    # creates starting vector for population
+
+
+base_scenario <- ode(y = init_pop, 
+                 times = seq(0, 51, by=1/12), 
+                 func = deq_system, 
+                 parms = par_vector)
+
+# Plot cohort trace
+t_long <- as_tibble(base_scenario)
+colnames(t_long) <- c("year", "N","S","E","L","T","D")
+t_long <- t_long |>
+    pivot_longer(cols = c("N","S","E","L","T","D"), names_to = "state", values_to = "count")
+
+ggplot(data = t_long) +
+  geom_line(aes(x=year, y=count, color=state))+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x="Year", y="Number of people", color="Health state")+
+  theme(legend.position = "bottom")+
+  geom_vline(xintercept = 30, linetype = "dashed", color = "grey")+
+  ggtitle("Cohort trace, all cohorts and all years")
+
+
+```
 
 
 ## Last two questions

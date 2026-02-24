@@ -37,7 +37,7 @@ Cadham et. al. "Understanding Equity-Efficiency Trade-offs for Healthcare Resour
 
     -   Creates unequal access
 
-    -   Worsens existing inequities in health outcomes
+    -   Excacerbates existing inequities in health outcomes
 
 -   Fairness/equity criteria can conflict with efficiency **and each other!**
 
@@ -81,13 +81,13 @@ Cadham et. al. "Understanding Equity-Efficiency Trade-offs for Healthcare Resour
 
 -   "A QALY is a QALY is a QALY"
 
--   Many decision-making bodies disagree
+-   Some decision-making bodies disagree
 
 ## Norway's 3 criteria for health technology assessment
 
 -   **Health-benefit:** prioritize interventions with greater expected health benefit (and other relevant welfare benefits)
 
--   **Resource:** prioritize interventions that requires fewer resources
+-   **Resource:** prioritize interventions that require fewer resources
 
 -   **Health loss:** prioritize interventions for populations with a greater expected lifetime health loss in the absence of intervention.
 
@@ -147,15 +147,15 @@ Proposed scheme by NICE in UK
 
     -   [Severity-adjusted probability cost-effective](https://doi.org/10.1007/s40273-019-00810-8) could help
 
--   Do we consider age?
+-   Do they consider age?
 
-    -   Individual patient age not considered; average patient age is implicit
+    -   Not explicitly, but average patient age for disease is "baked in"
 
 ## Public support for severity-adjusted thresholds mixed
 
 And sensitive to how the question is phrased
 
-![](figs/Reckers-Droog support proportional shortfall.png)
+![](figs/Reckers-Droog%20support%20proportional%20shortfall.png)
 
 ## In general
 
@@ -163,7 +163,7 @@ And sensitive to how the question is phrased
 
 -   [**Some consensus**]{.underline} on dimensions of equity to priorities
 
--   [**Low consensus**]{.underline} on exact, quantitative decision criteria for trading off equity vs. efficiency (QALY maximization)
+-   [**Low consensus**]{.underline} on specific, quantitative decision criteria for trading off equity vs. efficiency (QALY maximization)
 
     -   Norway has done the most work on this
 
@@ -175,7 +175,7 @@ And sensitive to how the question is phrased
 
 ## Incorporating equity
 
-Four types:
+Four approaches:
 
 1.  Equity evidence review
 
@@ -185,7 +185,7 @@ Four types:
 
 4.  Equity trade-off analysis
 
-Mirelman (2015) [Methods for incorporating health equity impacts in economic evaluation with applications to low and middle income countries](https://www.york.ac.uk/che/seminars/economic-evaluation/2015/andrew-mirelman/)
+Andrew Mirelman (2015) [Methods for incorporating health equity impacts in economic evaluation with applications to low and middle income countries](https://www.york.ac.uk/che/seminars/economic-evaluation/2015/andrew-mirelman/)
 
 ## Equity evidence review
 
@@ -205,7 +205,7 @@ Mirelman (2015) [Methods for incorporating health equity impacts in economic eva
 
 **Pro:** flexible because 'equity grounds' not defined
 
-**Con:** no explicit quantification of inequity. Only addresses 1/2 of equity-efficiency trade-off
+**Con:** no explicit quantification of inequity (addresses half of the equity-efficiency trade-off)
 
 ## Equity distribution analysis
 
@@ -221,7 +221,7 @@ Mirelman (2015) [Methods for incorporating health equity impacts in economic eva
 
 **Pro:** articulates and applies clear decision criterion
 
-**Con:** complex calculation; defining "optimal" equity-equity trade-off is challenging
+**Con:** complex calculation; defining "optimal" equity-equity trade-off is very challenging
 
 ## Equity-efficiency plane
 
@@ -577,12 +577,24 @@ For low inequality aversion levels, we prefer universal reminders. For higher in
 
 -   Many frameworks exist, but no consensus on optimal equity-efficiency trade-off
 
+## Next class: First applied guest lecture
+
+-   Complete reading
+
+-   Look at code when available
+
+-   Come with at least one question
+
 ## Logistics
 
--   Project proposal due Fri, Nov 1
+-   **Project proposal** due Fri, Feb 27
 
-    -   I suggest discussing your idea with me before proposal deadline
+-   *Winter reading week March 2 to March 6*
 
--   **Next class:** presentation on open-source model
+-   **Assignment 4** due Wed, Mar 11
 
--   Assignment 5 (Calibration, VoI) due Fri, Nov 15
+-   **Open source model presentations** in class on Thurs, March 12
+
+-   **Assignment 5** due Wed, Mar 18
+
+-   **Office hours** on Mondays 2:30pm to 3:30pm, room 1128

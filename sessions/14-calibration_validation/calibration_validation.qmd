@@ -795,4 +795,4 @@ Only applies to models predicting into the future.
 
 -   **Open source model presentations** in class on Thurs, March 12
 
--   **Office hours** on Mondays 2:30pm to 3:30pm, room 1128
+-   **Office hours**: Mondays 2:30pm to 3:30pm, room 1128

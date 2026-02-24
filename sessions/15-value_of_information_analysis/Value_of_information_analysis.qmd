@@ -2,7 +2,7 @@
 title: "Value of information analysis"
 subtitle: "EPIB  676 session 15, McGill University"
 author: "Alton Russell"
-date: "29 Oct 2024"
+date: "24 Feb 2026"
 format: revealjs
 editor: visual
 ---
@@ -17,17 +17,23 @@ library(MASS) # for mvrnorm() function
 
 ## Today
 
+-   [**Wrapping up calibration and validation**]{.underline}
+
 -   Expected value of perfect information
 
 -   Expected value of partially perfect information
 
 -   Expected value of sample information
 
+## Calibration and validation
+
+<https://htmlpreview.github.io/?https://github.com/altonrus/epib-678/blob/main/sessions/14-calibration_validation/calibration_validation.html#/what-about-uncertainty>
+
 ## Switch over
 
 "Research prioritization and study design using VoI analysis" by Anna Heath, Natalia Kunst, and Jeremy Goldhaber-Fiebert
 
-[Materials on MyCourses](https://mycourses2.mcgill.ca/d2l/le/lessons/624791/topics/6929073)
+[Materials on MyCourses](https://mycourses2.mcgill.ca/d2l/le/lessons/725490/topics/8088177)
 
 ## Fenwick et. al. 2020 figure
 
@@ -51,12 +57,16 @@ library(MASS) # for mvrnorm() function
 
 ## Logistics
 
--   Next class (Thurs Oct 31 🎃): Last methods lecture (on equity considerations)
+-   Complete reading before next class
 
--   Project proposal due Fri, Nov 1
+    -   Last lecture before application phase!
 
-    -   I suggest discussing your idea with me before proposal deadline
+-   **Project proposal** due Fri, Feb 27
 
--   Presentation on open-source model Tue, Nov 5
+-   **Assignment 4** due Wed, Mar 11
 
--   Assignment 5 (Calibration, VoI) due Fri, Nov 15
+-   **Open source model presentations** in class on Thurs, March 12
+
+-   **Assignment 5** due Wed, Mar 18
+
+-   **Office hours** on Mondays 2:30pm to 3:30pm, room 1128
