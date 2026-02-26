@@ -9,7 +9,15 @@ editor: visual
 
 ## Today
 
--   **Equity in health technology assessment policies**
+-   [**Value of information analysis (continued, PDF on Mycourses)**]{.underline}
+
+-   Equity in health technology assessment policies
+
+-   Methods for decision-analytic modelers
+
+## Today
+
+-   [**Equity in health technology assessment policies**]{.underline}
 
 -   Methods for decision-analytic modelers
 
@@ -171,7 +179,7 @@ And sensitive to how the question is phrased
 
 -   Equity in health technology assessment policies
 
--   **Methods for decision-analytic modelers**
+-   [**Methods for decision-analytic modelers**]{.underline}
 
 ## Incorporating equity
 
@@ -588,6 +596,8 @@ For low inequality aversion levels, we prefer universal reminders. For higher in
 ## Logistics
 
 -   **Project proposal** due Fri, Feb 27
+
+    -   Upload to Mycourses
 
 -   *Winter reading week March 2 to March 6*
 
